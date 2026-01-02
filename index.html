@@ -830,7 +830,7 @@
     <div class="app-container">
         <div class="app-header">
             <button class="rating-btn" id="ratingBtn">
-                <i class="fas fa-star"></i> <span id="ratingValue">0</span>
+                <i class="fas fa-star"></i> <span id="ratingValue">0.00</span>
             </button>
             <div class="app-title">ТАКСОМЕТР</div>
             <div class="app-subtitle">Учёт поездок и бензина</div>
@@ -849,7 +849,7 @@
                     <div class="distance-label">
                         <i class="fas fa-road"></i>Проехано за сегодня:
                     </div>
-                    <div class="distance-value">0<span class="unit">км</span></div>
+                    <div class="distance-value">0.00<span class="unit">км</span></div>
                 </div>
                 
                 <div class="earnings-display">
@@ -863,7 +863,7 @@
                     <div class="fuel-label">
                         <i class="fas fa-gas-pump"></i>Бензин:
                     </div>
-                    <div class="fuel-value">0<span class="fuel-unit">л</span></div>
+                    <div class="fuel-value">0.00<span class="fuel-unit">л</span></div>
                     <div class="fuel-warning" id="fuelWarning" style="display: none;">
                         <i class="fas fa-exclamation-triangle"></i> Мало бензина!
                     </div>
@@ -893,7 +893,7 @@
                 <div class="rating-stars" id="ratingStarsDisplay">
                     ★★★★★
                 </div>
-                <div class="rating-value" id="currentRatingValue">0.0</div>
+                <div class="rating-value" id="currentRatingValue">0.00</div>
                 <div class="rating-count" id="ratingCount">оценок: 0</div>
             </div>
             
@@ -924,7 +924,7 @@
             <h2 class="fuel-menu-title">Добавить бензин</h2>
             
             <div class="fuel-current" id="fuelCurrent">
-                Текущее количество: <span id="currentFuelValue">0</span>л
+                Текущее количество: <span id="currentFuelValue">0.00</span>л
             </div>
             
             <div class="fuel-instruction">
@@ -937,9 +937,9 @@
                 <label class="fuel-input-label" for="fuelInput">
                     Сколько литров добавить?
                 </label>
-                <input type="number" id="fuelInput" class="fuel-input-field" placeholder="Например: 10 или 5.5" min="0" step="0.1" autocomplete="off">
+                <input type="number" id="fuelInput" class="fuel-input-field" placeholder="Например: 10.50 или 5.75" min="0" step="0.01" autocomplete="off">
                 <div class="fuel-input-hint">
-                    Только положительные числа
+                    Только положительные числа, можно вводить сотые (например: 10.50)
                 </div>
             </div>
             
@@ -962,12 +962,12 @@
             
             <div class="input-group">
                 <label class="input-label" for="kmInput">Сколько километров (км) добавить?</label>
-                <input type="number" id="kmInput" class="km-input-field" placeholder="0" min="0" step="0.1" value="1">
+                <input type="number" id="kmInput" class="km-input-field" placeholder="0" min="0" step="0.01" value="1.00">
                 <div style="text-align: center; margin-top: 5px; font-size: 14px; color: #666;">
                     Добавится: <span id="addEarnings" style="color: #2E7D32; font-weight: bold;">120₽</span>
                 </div>
                 <div class="fuel-required">
-                    Потратится: <span id="fuelRequired" class="fuel-required-value">0.5л</span> бензина
+                    Потратится: <span id="fuelRequired" class="fuel-required-value">0.50л</span> бензина
                 </div>
             </div>
             
@@ -1032,6 +1032,11 @@
         let currentAverageRating = 0;
         let selectedRating = 0;
         
+        // Функция округления до сотых
+        function roundToHundredths(value) {
+            return Math.round(value * 100) / 100;
+        }
+        
         // Загрузить данные рейтинга из localStorage
         function loadRatingData() {
             const savedRatings = localStorage.getItem('taximeter_ratings');
@@ -1050,7 +1055,7 @@
             localStorage.setItem('taximeter_ratings', JSON.stringify(ratings));
         }
         
-        // Рассчитать средний рейтинг
+        // Рассчитать средний рейтинг (с округлением до сотых)
         function calculateAverageRating() {
             if (ratings.length === 0) {
                 currentAverageRating = 0;
@@ -1058,16 +1063,16 @@
             }
             
             const sum = ratings.reduce((total, rating) => total + rating, 0);
-            currentAverageRating = sum / ratings.length;
+            currentAverageRating = roundToHundredths(sum / ratings.length);
         }
         
         // Обновить отображение рейтинга
         function updateRatingDisplay() {
-            // Обновляем значение в кнопке
-            ratingValue.textContent = currentAverageRating.toFixed(1);
+            // Обновляем значение в кнопке (до сотых)
+            ratingValue.textContent = currentAverageRating.toFixed(2);
             
-            // Обновляем значение в меню
-            currentRatingValue.textContent = currentAverageRating.toFixed(1);
+            // Обновляем значение в меню (до сотых)
+            currentRatingValue.textContent = currentAverageRating.toFixed(2);
             ratingCount.textContent = `оценок: ${ratings.length}`;
             
             // Обновляем отображение звезд
@@ -1078,20 +1083,25 @@
         function updateStarsDisplay() {
             let starsHTML = '';
             const fullStars = Math.floor(currentAverageRating);
-            const hasHalfStar = currentAverageRating % 1 >= 0.5;
+            const decimalPart = currentAverageRating - fullStars;
             
             // Добавляем полные звезды
             for (let i = 0; i < fullStars; i++) {
                 starsHTML += '★';
             }
             
-            // Добавляем половину звезды если нужно
-            if (hasHalfStar) {
+            // Добавляем частичную звезду если нужно
+            if (decimalPart >= 0.75) {
                 starsHTML += '★';
+            } else if (decimalPart >= 0.25) {
+                starsHTML += '★';
+            } else if (decimalPart > 0) {
+                // Маленькая часть - показываем пустую
             }
             
             // Добавляем пустые звезды
-            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            const totalStars = 5;
+            const emptyStars = totalStars - starsHTML.length;
             for (let i = 0; i < emptyStars; i++) {
                 starsHTML += '☆';
             }
@@ -1106,14 +1116,15 @@
             saveRatingData();
             updateRatingDisplay();
             
-            showNotification(`Спасибо за оценку ${newRating}! Новый рейтинг: ${currentAverageRating.toFixed(1)}`, 'success');
+            showNotification(`Спасибо за оценку ${newRating}! Новый рейтинг: ${currentAverageRating.toFixed(2)}`, 'success');
         }
         
         // Обновление отображения основных данных
         function updateDisplay() {
-            distanceValue.innerHTML = distance.toFixed(1) + '<span class="unit">км</span>';
+            // Округляем до сотых перед отображением
+            distanceValue.innerHTML = roundToHundredths(distance).toFixed(2) + '<span class="unit">км</span>';
             earningsValue.innerHTML = Math.round(earnings) + '<span class="ruble-unit">₽</span>';
-            fuelValue.innerHTML = fuel.toFixed(1) + '<span class="fuel-unit">л</span>';
+            fuelValue.innerHTML = roundToHundredths(fuel).toFixed(2) + '<span class="fuel-unit">л</span>';
             
             // Проверяем уровень бензина
             if (fuel < FUEL_WARNING_THRESHOLD && fuel > 0) {
@@ -1134,10 +1145,10 @@
             // Обновляем состояние кнопки добавления километров
             updateAddKmButtonState();
             
-            // Сохраняем в localStorage
-            localStorage.setItem('taximeter_distance', distance);
+            // Сохраняем в localStorage (с округлением)
+            localStorage.setItem('taximeter_distance', roundToHundredths(distance));
             localStorage.setItem('taximeter_earnings', earnings);
-            localStorage.setItem('taximeter_fuel', fuel);
+            localStorage.setItem('taximeter_fuel', roundToHundredths(fuel));
         }
         
         // Обновление состояния кнопки добавления километров
@@ -1188,10 +1199,10 @@
                 return false;
             }
             
-            const fuelNeeded = km * FUEL_CONSUMPTION_PER_KM;
+            const fuelNeeded = roundToHundredths(km * FUEL_CONSUMPTION_PER_KM);
             
             if (fuel < fuelNeeded) {
-                showNotification(`Недостаточно бензина! Нужно: ${fuelNeeded.toFixed(1)}л, есть: ${fuel.toFixed(1)}л`, 'error');
+                showNotification(`Недостаточно бензина! Нужно: ${fuelNeeded.toFixed(2)}л, есть: ${roundToHundredths(fuel).toFixed(2)}л`, 'error');
                 return false;
             }
             
@@ -1199,16 +1210,16 @@
             const oldEarnings = earnings;
             const oldFuel = fuel;
             
-            distance += km;
-            earnings += km * TARIFF_PER_KM;
-            fuel -= fuelNeeded;
+            distance = roundToHundredths(distance + km);
+            earnings += Math.round(km * TARIFF_PER_KM);
+            fuel = roundToHundredths(fuel - fuelNeeded);
             
             if (fuel < 0) fuel = 0;
             
             updateDisplay();
             
             const earned = Math.round(km * TARIFF_PER_KM);
-            const message = `Добавлено ${km.toFixed(1)} км = +${earned}₽, потрачено ${fuelNeeded.toFixed(1)}л бензина`;
+            const message = `Добавлено ${km.toFixed(2)} км = +${earned}₽, потрачено ${fuelNeeded.toFixed(2)}л бензина`;
             
             showNotification(message, 'success');
             return true;
@@ -1229,11 +1240,11 @@
             }
             
             const oldFuel = fuel;
-            fuel += liters;
+            fuel = roundToHundredths(fuel + liters);
             
             updateDisplay();
             
-            const message = `Добавлено ${liters.toFixed(1)}л бензина. Теперь: ${fuel.toFixed(1)}л`;
+            const message = `Добавлено ${liters.toFixed(2)}л бензина. Теперь: ${fuel.toFixed(2)}л`;
             
             showNotification(message, 'success');
             return true;
@@ -1281,7 +1292,7 @@
         
         // Открыть меню бензина
         function openFuelMenu() {
-            currentFuelValue.textContent = fuel.toFixed(1);
+            currentFuelValue.textContent = fuel.toFixed(2);
             fuelInput.value = '';
             fuelMenuOverlay.classList.add('active');
             fuelInput.focus();
@@ -1301,21 +1312,21 @@
         
         // Открыть меню километров
         function openKmMenu() {
-            kmInput.value = '1';
+            kmInput.value = '1.00';
             updateKmMenuCalculations();
             kmMenuOverlay.classList.add('active');
             kmInput.focus();
             kmInput.select();
         }
         
-        // Обновить расчёты в меню километров
+        // Обновить расчёты в меню километров (с округлением до сотых)
         function updateKmMenuCalculations() {
             const km = parseFloat(kmInput.value) || 0;
             const earnings = Math.round(km * TARIFF_PER_KM);
-            const fuelNeeded = km * FUEL_CONSUMPTION_PER_KM;
+            const fuelNeeded = roundToHundredths(km * FUEL_CONSUMPTION_PER_KM);
             
             addEarnings.textContent = `${earnings}₽`;
-            fuelRequired.textContent = `${fuelNeeded.toFixed(1)}л`;
+            fuelRequired.textContent = `${fuelNeeded.toFixed(2)}л`;
             
             if (fuelNeeded > fuel) {
                 fuelRequired.style.color = '#ff5555';
@@ -1394,6 +1405,19 @@
         
         // Обновление расчётов при изменении километров
         kmInput.addEventListener('input', updateKmMenuCalculations);
+        
+        // Форматирование ввода (автодобавление .00 при потере фокуса)
+        kmInput.addEventListener('blur', function() {
+            if (this.value && !isNaN(parseFloat(this.value))) {
+                this.value = parseFloat(this.value).toFixed(2);
+            }
+        });
+        
+        fuelInput.addEventListener('blur', function() {
+            if (this.value && !isNaN(parseFloat(this.value))) {
+                this.value = parseFloat(this.value).toFixed(2);
+            }
+        });
         
         // Инициализация при загрузке
         window.addEventListener('load', function() {
