@@ -58,6 +58,39 @@
             margin-top: 3px;
         }
 
+        .rating-btn {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: linear-gradient(to bottom, #4CAF50, #2E7D32);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #1B5E20, 0 6px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 10;
+            white-space: nowrap;
+            min-width: 90px;
+        }
+
+        .rating-btn:hover {
+            background: linear-gradient(to bottom, #5CBF60, #3D8B40);
+            transform: translateY(1px);
+            box-shadow: 0 3px 0 #1B5E20, 0 5px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .rating-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #1B5E20, 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
         .clear-btn {
             position: absolute;
             top: 12px;
@@ -75,6 +108,8 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            white-space: nowrap;
+            min-width: 90px;
         }
 
         .clear-btn:hover {
@@ -263,7 +298,8 @@
             box-shadow: 0 4px 0 #666666, 0 6px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .fuel-menu-overlay {
+        /* Рейтинг меню */
+        .rating-menu-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -274,6 +310,168 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            padding: 15px;
+        }
+
+        .rating-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .rating-menu-container {
+            background: linear-gradient(to bottom, #FFD700 0%, #FFC300 100%);
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transform: translateY(30px);
+            transition: transform 0.4s;
+            border: 4px solid #333;
+        }
+
+        .rating-menu-overlay.active .rating-menu-container {
+            transform: translateY(0);
+        }
+
+        .rating-menu-title {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .current-rating {
+            background-color: #333;
+            color: #FFD700;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .rating-stars {
+            font-size: 28px;
+            color: #FFD700;
+            letter-spacing: 5px;
+        }
+
+        .rating-value {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .rating-count {
+            font-size: 14px;
+            color: #cccccc;
+        }
+
+        .rating-instruction {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .stars-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .star-btn {
+            background: linear-gradient(to bottom, #4A90E2, #2C6DB0);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #1A4A7A, 0 6px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .star-btn:hover {
+            background: linear-gradient(to bottom, #5CA0F2, #3D7BC0);
+            transform: translateY(1px) scale(1.05);
+            box-shadow: 0 3px 0 #1A4A7A, 0 5px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .star-btn:active {
+            transform: translateY(3px) scale(0.95);
+            box-shadow: 0 1px 0 #1A4A7A, 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .star-btn.active {
+            background: linear-gradient(to bottom, #FFD700, #FFC300);
+            color: #333;
+            box-shadow: 0 4px 0 #CC9900, 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .rating-menu-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .menu-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .apply-btn {
+            background: linear-gradient(to bottom, #4CAF50, #2E7D32);
+            color: white;
+        }
+
+        .cancel-btn {
+            background: linear-gradient(to bottom, #f0f0f0, #ccc);
+            color: #333;
+        }
+
+        /* Остальные меню */
+        .fuel-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s;
@@ -372,38 +570,7 @@
             font-style: italic;
         }
 
-        .fuel-menu-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .menu-btn {
-            flex: 1;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s;
-            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .menu-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .apply-btn {
-            background: linear-gradient(to bottom, #4CAF50, #2E7D32);
-            color: white;
-        }
-
-        .cancel-btn {
-            background: linear-gradient(to bottom, #f0f0f0, #ccc);
-            color: #333;
-        }
-
+        /* Меню километров */
         .km-menu-overlay {
             position: fixed;
             top: 0;
@@ -414,7 +581,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1001;
+            z-index: 1002;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s;
@@ -523,7 +690,7 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             opacity: 0;
             transition: all 0.4s;
-            z-index: 1002;
+            z-index: 1003;
             font-weight: 600;
             max-width: 90%;
             text-align: center;
@@ -570,6 +737,12 @@
                 padding: 15px;
                 font-size: 20px;
             }
+            
+            .star-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
         }
 
         @media (max-width: 400px) {
@@ -582,9 +755,10 @@
                 font-size: 20px;
             }
             
-            .clear-btn {
+            .clear-btn, .rating-btn {
                 padding: 6px 12px;
                 font-size: 12px;
+                min-width: 80px;
             }
             
             .distance-value, .earnings-value, .fuel-value {
@@ -596,8 +770,15 @@
             }
             
             .fuel-menu-container,
-            .km-menu-container {
+            .km-menu-container,
+            .rating-menu-container {
                 padding: 20px;
+            }
+            
+            .star-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
             }
         }
     </style>
@@ -605,6 +786,9 @@
 <body>
     <div class="app-container">
         <div class="app-header">
+            <button class="rating-btn" id="ratingBtn">
+                <i class="fas fa-star"></i> Рейтинг - <span id="ratingValue">0</span>
+            </button>
             <div class="app-title">ТАКСОМЕТР</div>
             <div class="app-subtitle">Учёт поездок и бензина</div>
             <button class="clear-btn" id="clearBtn">
@@ -653,6 +837,40 @@
                     <div><i class="fas fa-bolt"></i> Тариф: 120 рублей за 1 км (120₽)</div>
                     <div class="fuel-rate"><i class="fas fa-gas-pump"></i> Расход: 1 км = 0.5л бензина</div>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Меню рейтинга -->
+    <div class="rating-menu-overlay" id="ratingMenuOverlay">
+        <div class="rating-menu-container">
+            <h2 class="rating-menu-title">Оценка водителя</h2>
+            
+            <div class="current-rating">
+                <div class="rating-stars" id="ratingStarsDisplay">
+                    ★★★★★
+                </div>
+                <div class="rating-value" id="currentRatingValue">0.0</div>
+                <div class="rating-count" id="ratingCount">оценок: 0</div>
+            </div>
+            
+            <div class="rating-instruction">
+                <p><strong>Выберите оценку от 1 до 5:</strong></p>
+                <p>5 - отлично, 1 - плохо</p>
+                <p>Рейтинг рассчитывается как среднее всех оценок</p>
+            </div>
+            
+            <div class="stars-container">
+                <button class="star-btn" data-rating="1">1</button>
+                <button class="star-btn" data-rating="2">2</button>
+                <button class="star-btn" data-rating="3">3</button>
+                <button class="star-btn" data-rating="4">4</button>
+                <button class="star-btn" data-rating="5">5</button>
+            </div>
+            
+            <div class="rating-menu-buttons">
+                <button class="menu-btn cancel-btn" id="ratingCancelBtn">Отмена</button>
+                <button class="menu-btn apply-btn" id="ratingApplyBtn">Оценить</button>
             </div>
         </div>
     </div>
@@ -732,9 +950,22 @@
         const earningsValue = document.querySelector('.earnings-value');
         const fuelValue = document.querySelector('.fuel-value');
         const fuelWarning = document.getElementById('fuelWarning');
+        const ratingBtn = document.getElementById('ratingBtn');
+        const ratingValue = document.getElementById('ratingValue');
         const clearBtn = document.getElementById('clearBtn');
         const addKmBtn = document.getElementById('addKmBtn');
         const fuelDisplay = document.getElementById('fuelDisplay');
+        
+        // Рейтинг элементы
+        const ratingMenuOverlay = document.getElementById('ratingMenuOverlay');
+        const ratingCancelBtn = document.getElementById('ratingCancelBtn');
+        const ratingApplyBtn = document.getElementById('ratingApplyBtn');
+        const ratingStarsDisplay = document.getElementById('ratingStarsDisplay');
+        const currentRatingValue = document.getElementById('currentRatingValue');
+        const ratingCount = document.getElementById('ratingCount');
+        const starButtons = document.querySelectorAll('.star-btn');
+        
+        // Остальные элементы
         const fuelMenuOverlay = document.getElementById('fuelMenuOverlay');
         const fuelCancelBtn = document.getElementById('fuelCancelBtn');
         const fuelApplyBtn = document.getElementById('fuelApplyBtn');
@@ -753,7 +984,89 @@
         let earnings = 0;
         let fuel = 0;
         
-        // Обновление отображения
+        // Данные рейтинга
+        let ratings = []; // Массив всех оценок
+        let currentAverageRating = 0;
+        let selectedRating = 0;
+        
+        // Загрузить данные рейтинга из localStorage
+        function loadRatingData() {
+            const savedRatings = localStorage.getItem('taximeter_ratings');
+            if (savedRatings) {
+                ratings = JSON.parse(savedRatings);
+                calculateAverageRating();
+            } else {
+                ratings = [];
+                currentAverageRating = 0;
+            }
+            updateRatingDisplay();
+        }
+        
+        // Сохранить данные рейтинга в localStorage
+        function saveRatingData() {
+            localStorage.setItem('taximeter_ratings', JSON.stringify(ratings));
+        }
+        
+        // Рассчитать средний рейтинг
+        function calculateAverageRating() {
+            if (ratings.length === 0) {
+                currentAverageRating = 0;
+                return;
+            }
+            
+            const sum = ratings.reduce((total, rating) => total + rating, 0);
+            currentAverageRating = sum / ratings.length;
+        }
+        
+        // Обновить отображение рейтинга
+        function updateRatingDisplay() {
+            // Обновляем значение в кнопке
+            ratingValue.textContent = currentAverageRating.toFixed(1);
+            
+            // Обновляем значение в меню
+            currentRatingValue.textContent = currentAverageRating.toFixed(1);
+            ratingCount.textContent = `оценок: ${ratings.length}`;
+            
+            // Обновляем отображение звезд
+            updateStarsDisplay();
+        }
+        
+        // Обновить отображение звезд
+        function updateStarsDisplay() {
+            let starsHTML = '';
+            const fullStars = Math.floor(currentAverageRating);
+            const hasHalfStar = currentAverageRating % 1 >= 0.5;
+            
+            // Добавляем полные звезды
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '★';
+            }
+            
+            // Добавляем половину звезды если нужно
+            if (hasHalfStar) {
+                starsHTML += '★';
+            }
+            
+            // Добавляем пустые звезды
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            for (let i = 0; i < emptyStars; i++) {
+                starsHTML += '☆';
+            }
+            
+            ratingStarsDisplay.innerHTML = starsHTML;
+        }
+        
+        // Добавить новую оценку
+        function addRating(newRating) {
+            ratings.push(newRating);
+            calculateAverageRating();
+            saveRatingData();
+            updateRatingDisplay();
+            
+            showNotification(`Спасибо за оценку ${newRating}! Новый рейтинг: ${currentAverageRating.toFixed(1)}`, 'success');
+        }
+        
+        // Обновление отображения основных данных
         function updateDisplay() {
             distanceValue.innerHTML = distance.toFixed(1) + '<span class="unit">км</span>';
             earningsValue.innerHTML = Math.round(earnings) + '<span class="ruble-unit">₽</span>';
@@ -778,7 +1091,7 @@
             // Обновляем состояние кнопки добавления километров
             updateAddKmButtonState();
             
-            // Сохраняем в localStorage
+            // Сохраняем в localStorage (кроме рейтинга, который сохраняется отдельно)
             localStorage.setItem('taximeter_distance', distance);
             localStorage.setItem('taximeter_earnings', earnings);
             localStorage.setItem('taximeter_fuel', fuel);
@@ -786,7 +1099,6 @@
         
         // Обновление состояния кнопки добавления километров
         function updateAddKmButtonState() {
-            // Вычисляем, сколько бензина нужно для минимальной поездки (1 км)
             const fuelNeeded = FUEL_CONSUMPTION_PER_KM;
             
             if (fuel < fuelNeeded) {
@@ -798,7 +1110,7 @@
             }
         }
         
-        // Загрузить данные из localStorage
+        // Загрузить основные данные из localStorage
         function loadData() {
             distance = parseFloat(localStorage.getItem('taximeter_distance')) || 0;
             earnings = parseFloat(localStorage.getItem('taximeter_earnings')) || 0;
@@ -833,31 +1145,25 @@
                 return false;
             }
             
-            // Рассчитываем расход бензина
             const fuelNeeded = km * FUEL_CONSUMPTION_PER_KM;
             
-            // Проверяем, достаточно ли бензина
             if (fuel < fuelNeeded) {
                 showNotification(`Недостаточно бензина! Нужно: ${fuelNeeded.toFixed(1)}л, есть: ${fuel.toFixed(1)}л`, 'error');
                 return false;
             }
             
-            // Сохраняем старые значения для сообщения
             const oldDistance = distance;
             const oldEarnings = earnings;
             const oldFuel = fuel;
             
-            // Обновляем данные
             distance += km;
             earnings += km * TARIFF_PER_KM;
             fuel -= fuelNeeded;
             
-            // Гарантируем, что бензин не станет отрицательным
             if (fuel < 0) fuel = 0;
             
             updateDisplay();
             
-            // Формируем сообщение
             const earned = Math.round(km * TARIFF_PER_KM);
             const message = `Добавлено ${km.toFixed(1)} км = +${earned}₽, потрачено ${fuelNeeded.toFixed(1)}л бензина`;
             
@@ -874,37 +1180,60 @@
                 return false;
             }
             
-            // Проверяем максимальное значение (например, 1000 литров)
             if (fuel + liters > 1000) {
                 showNotification('Слишком большое количество бензина', 'error');
                 return false;
             }
             
-            // Сохраняем старое значение для сообщения
             const oldFuel = fuel;
-            
-            // Добавляем бензин
             fuel += liters;
             
             updateDisplay();
             
-            // Формируем сообщение
             const message = `Добавлено ${liters.toFixed(1)}л бензина. Теперь: ${fuel.toFixed(1)}л`;
             
             showNotification(message, 'success');
             return true;
         }
         
-        // Очистить данные
+        // Очистить данные (кроме рейтинга)
         function clearData() {
-            if (confirm("Очистить все данные? Это действие нельзя отменить.")) {
+            if (confirm("Очистить все данные? Это действие нельзя отменить. Рейтинг останется сохранённым.")) {
                 distance = 0;
                 earnings = 0;
                 fuel = 0;
                 
                 updateDisplay();
-                showNotification("Все данные очищены", 'success');
+                showNotification("Данные очищены. Рейтинг сохранён.", 'success');
             }
+        }
+        
+        // Открыть меню рейтинга
+        function openRatingMenu() {
+            selectedRating = 0;
+            
+            // Сбросить выделение кнопок
+            starButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            ratingMenuOverlay.classList.add('active');
+        }
+        
+        // Закрыть меню рейтинга
+        function closeRatingMenu() {
+            ratingMenuOverlay.classList.remove('active');
+        }
+        
+        // Применить оценку
+        function applyRating() {
+            if (selectedRating === 0) {
+                showNotification('Выберите оценку от 1 до 5', 'error');
+                return;
+            }
+            
+            addRating(selectedRating);
+            closeRatingMenu();
         }
         
         // Открыть меню бензина
@@ -945,7 +1274,6 @@
             addEarnings.textContent = `${earnings}₽`;
             fuelRequired.textContent = `${fuelNeeded.toFixed(1)}л`;
             
-            // Подсвечиваем, если недостаточно бензина
             if (fuelNeeded > fuel) {
                 fuelRequired.style.color = '#ff5555';
                 kmAddBtn.disabled = true;
@@ -969,7 +1297,28 @@
             }
         }
         
-        // Обработчики событий
+        // Обработчики событий для кнопок рейтинга
+        starButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                selectedRating = parseInt(this.getAttribute('data-rating'));
+                
+                // Сбросить все кнопки
+                starButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Подсветить выбранную и все предыдущие
+                for (let i = 1; i <= selectedRating; i++) {
+                    document.querySelector(`.star-btn[data-rating="${i}"]`).classList.add('active');
+                }
+            });
+        });
+        
+        // Основные обработчики событий
+        ratingBtn.addEventListener('click', openRatingMenu);
+        ratingCancelBtn.addEventListener('click', closeRatingMenu);
+        ratingApplyBtn.addEventListener('click', applyRating);
+        
         clearBtn.addEventListener('click', clearData);
         addKmBtn.addEventListener('click', openKmMenu);
         fuelDisplay.addEventListener('click', openFuelMenu);
@@ -979,6 +1328,10 @@
         kmAddBtn.addEventListener('click', handleAddKm);
         
         // Закрыть меню при клике вне его
+        ratingMenuOverlay.addEventListener('click', function(e) {
+            if (e.target === ratingMenuOverlay) closeRatingMenu();
+        });
+        
         fuelMenuOverlay.addEventListener('click', function(e) {
             if (e.target === fuelMenuOverlay) closeFuelMenu();
         });
@@ -1002,6 +1355,7 @@
         // Инициализация при загрузке
         window.addEventListener('load', function() {
             loadData();
+            loadRatingData();
             showNotification('Приложение загружено', 'success');
         });
         
