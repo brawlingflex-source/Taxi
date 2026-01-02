@@ -182,6 +182,18 @@
             font-size: 32px;
         }
 
+        .fuel-warning {
+            color: #ff5555;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            opacity: 0.8;
+        }
+
         .info-panel {
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 12px;
@@ -204,6 +216,14 @@
             margin-top: 10px;
             font-weight: 600;
             font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .fuel-rate {
+            color: #4A90E2;
+            font-size: 13px;
         }
 
         .add-km-btn {
@@ -234,6 +254,13 @@
         .add-km-btn:active {
             transform: translateY(3px);
             box-shadow: 0 1px 0 #1B5E20, 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-km-btn:disabled {
+            background: linear-gradient(to bottom, #cccccc, #999999);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 0 #666666, 0 6px 10px rgba(0, 0, 0, 0.2);
         }
 
         .fuel-menu-overlay {
@@ -302,31 +329,6 @@
             font-size: 14px;
             color: #666;
             line-height: 1.5;
-        }
-
-        .instruction-examples {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
-            text-align: left;
-            padding-left: 20px;
-        }
-
-        .example-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .example-positive {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-
-        .example-negative {
-            color: #ff5555;
-            font-weight: bold;
         }
 
         .fuel-input-group {
@@ -457,6 +459,14 @@
             text-align: center;
             font-weight: 600;
             font-size: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .fuel-consumption {
+            color: #4A90E2;
+            font-size: 14px;
         }
 
         .input-group {
@@ -489,6 +499,18 @@
             box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2);
         }
 
+        .fuel-required {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .fuel-required-value {
+            color: #4A90E2;
+            font-weight: bold;
+        }
+
         .notification {
             position: fixed;
             bottom: 20px;
@@ -514,6 +536,10 @@
 
         .error-notification {
             background: linear-gradient(to right, #ff5555, #cc0000);
+        }
+
+        .warning-notification {
+            background: linear-gradient(to right, #FFA500, #FF8C00);
         }
 
         @media (max-height: 700px) {
@@ -611,6 +637,9 @@
                         <i class="fas fa-gas-pump"></i>Бензин:
                     </div>
                     <div class="fuel-value">0<span class="fuel-unit">л</span></div>
+                    <div class="fuel-warning" id="fuelWarning" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i> Мало бензина!
+                    </div>
                 </div>
             </div>
             
@@ -619,54 +648,43 @@
             </button>
             
             <div class="info-panel">
-                <p><i class="fas fa-info-circle</p>
-                <p style="margin-top: 8px; font-size: 12px; color: #4A90E5;">
-                    <i class="fas fa-lightbul
-                </p>
+                <p><i class="fas fa-info-circle"></i> Нажмите на "Бензин" чтобы добавить литры</p>
                 <div class="tariff-info">
-                    <i class="fas fa-bolt"></i> Тариф: 120 рублей за 1 км (120₽)
+                    <div><i class="fas fa-bolt"></i> Тариф: 120 рублей за 1 км (120₽)</div>
+                    <div class="fuel-rate"><i class="fas fa-gas-pump"></i> Расход: 1 км = 0.5л бензина</div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Меню для изменения бензина -->
+    <!-- Меню для добавления бензина -->
     <div class="fuel-menu-overlay" id="fuelMenuOverlay">
         <div class="fuel-menu-container">
-            <h2 class="fuel-menu-title">Изменение бензина</h2>
+            <h2 class="fuel-menu-title">Добавить бензин</h2>
             
             <div class="fuel-current" id="fuelCurrent">
                 Текущее количество: <span id="currentFuelValue">0</span>л
             </div>
             
             <div class="fuel-instruction">
-                <p><strong>Как изменить количество бензина:</strong></p>
-                <div class="instruction-examples">
-                    <div class="example-item">
-                        <span class="example-positive">+10</span> - добавить 10 литров
-                    </div>
-                    <div class="example-item">
-                        <span class="example-negative">-5</span> - убрать 5 литров
-                    </div>
-                    <div class="example-item">
-                        <span>50</span> - установить ровно 50 литров
-                    </div>
-                </div>
+                <p><strong>Введите количество литров для добавления:</strong></p>
+                <p>Можно добавлять только положительные числа.</p>
+                <p>Чтобы убавить бензин - добавьте километры поездки.</p>
             </div>
             
             <div class="fuel-input-group">
                 <label class="fuel-input-label" for="fuelInput">
-                    Введите количество литров:
+                    Сколько литров добавить?
                 </label>
-                <input type="text" id="fuelInput" class="fuel-input-field" placeholder="Например: +10, -5 или 50" autocomplete="off">
+                <input type="number" id="fuelInput" class="fuel-input-field" placeholder="Например: 10 или 5.5" min="0" step="0.1" autocomplete="off">
                 <div class="fuel-input-hint">
-                    Используйте "+" чтобы добавить, "-" чтобы убавить
+                    Только положительные числа
                 </div>
             </div>
             
             <div class="fuel-menu-buttons">
                 <button class="menu-btn cancel-btn" id="fuelCancelBtn">Отмена</button>
-                <button class="menu-btn apply-btn" id="fuelApplyBtn">Применить</button>
+                <button class="menu-btn apply-btn" id="fuelApplyBtn">Добавить</button>
             </div>
         </div>
     </div>
@@ -677,7 +695,8 @@
             <h2 class="km-menu-title">Добавить километры</h2>
             
             <div class="rate-display">
-                <i class="fas fa-calculator"></i> 1 км = 120 рублей (120₽)
+                <div><i class="fas fa-calculator"></i> 1 км = 120 рублей (120₽)</div>
+                <div class="fuel-consumption"><i class="fas fa-gas-pump"></i> 1 км = 0.5л бензина</div>
             </div>
             
             <div class="input-group">
@@ -685,6 +704,9 @@
                 <input type="number" id="kmInput" class="km-input-field" placeholder="0" min="0" step="0.1" value="1">
                 <div style="text-align: center; margin-top: 5px; font-size: 14px; color: #666;">
                     Добавится: <span id="addEarnings" style="color: #2E7D32; font-weight: bold;">120₽</span>
+                </div>
+                <div class="fuel-required">
+                    Потратится: <span id="fuelRequired" class="fuel-required-value">0.5л</span> бензина
                 </div>
             </div>
             
@@ -702,11 +724,14 @@
     <script>
         // Константы
         const TARIFF_PER_KM = 120;
+        const FUEL_CONSUMPTION_PER_KM = 0.5; // 0.5 литра на 1 км
+        const FUEL_WARNING_THRESHOLD = 5; // Предупреждение при < 5 литров
         
         // Элементы DOM
         const distanceValue = document.querySelector('.distance-value');
         const earningsValue = document.querySelector('.earnings-value');
         const fuelValue = document.querySelector('.fuel-value');
+        const fuelWarning = document.getElementById('fuelWarning');
         const clearBtn = document.getElementById('clearBtn');
         const addKmBtn = document.getElementById('addKmBtn');
         const fuelDisplay = document.getElementById('fuelDisplay');
@@ -720,6 +745,7 @@
         const kmCancelBtn = document.getElementById('kmCancelBtn');
         const kmAddBtn = document.getElementById('kmAddBtn');
         const addEarnings = document.getElementById('addEarnings');
+        const fuelRequired = document.getElementById('fuelRequired');
         const notification = document.getElementById('notification');
         
         // Данные
@@ -733,10 +759,43 @@
             earningsValue.innerHTML = Math.round(earnings) + '<span class="ruble-unit">₽</span>';
             fuelValue.innerHTML = fuel.toFixed(1) + '<span class="fuel-unit">л</span>';
             
+            // Проверяем уровень бензина для предупреждения
+            if (fuel < FUEL_WARNING_THRESHOLD && fuel > 0) {
+                fuelWarning.style.display = 'flex';
+                fuelDisplay.style.backgroundColor = 'rgba(255, 165, 0, 0.1)';
+                fuelDisplay.style.borderColor = '#FFA500';
+            } else if (fuel <= 0) {
+                fuelWarning.style.display = 'flex';
+                fuelWarning.innerHTML = '<i class="fas fa-exclamation-circle"></i> Бензин закончился!';
+                fuelDisplay.style.backgroundColor = 'rgba(255, 85, 85, 0.1)';
+                fuelDisplay.style.borderColor = '#ff5555';
+            } else {
+                fuelWarning.style.display = 'none';
+                fuelDisplay.style.backgroundColor = '';
+                fuelDisplay.style.borderColor = 'transparent';
+            }
+            
+            // Обновляем состояние кнопки добавления километров
+            updateAddKmButtonState();
+            
             // Сохраняем в localStorage
             localStorage.setItem('taximeter_distance', distance);
             localStorage.setItem('taximeter_earnings', earnings);
             localStorage.setItem('taximeter_fuel', fuel);
+        }
+        
+        // Обновление состояния кнопки добавления километров
+        function updateAddKmButtonState() {
+            // Вычисляем, сколько бензина нужно для минимальной поездки (1 км)
+            const fuelNeeded = FUEL_CONSUMPTION_PER_KM;
+            
+            if (fuel < fuelNeeded) {
+                addKmBtn.disabled = true;
+                addKmBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Недостаточно бензина';
+            } else {
+                addKmBtn.disabled = false;
+                addKmBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Добавить километры';
+            }
         }
         
         // Загрузить данные из localStorage
@@ -748,12 +807,14 @@
         }
         
         // Показать уведомление
-        function showNotification(message, isError = false) {
+        function showNotification(message, type = 'success') {
             notification.textContent = message;
-            notification.classList.remove('error-notification');
+            notification.className = 'notification';
             
-            if (isError) {
+            if (type === 'error') {
                 notification.classList.add('error-notification');
+            } else if (type === 'warning') {
+                notification.classList.add('warning-notification');
             }
             
             notification.classList.add('show');
@@ -763,108 +824,74 @@
             }, 3000);
         }
         
-        // Добавить километры
+        // Добавить километры (с расходом бензина)
         function addKilometers(km) {
             km = parseFloat(km);
             
             if (isNaN(km) || km <= 0) {
-                showNotification('Введите корректное количество километров', true);
+                showNotification('Введите корректное количество километров', 'error');
                 return false;
             }
+            
+            // Рассчитываем расход бензина
+            const fuelNeeded = km * FUEL_CONSUMPTION_PER_KM;
+            
+            // Проверяем, достаточно ли бензина
+            if (fuel < fuelNeeded) {
+                showNotification(`Недостаточно бензина! Нужно: ${fuelNeeded.toFixed(1)}л, есть: ${fuel.toFixed(1)}л`, 'error');
+                return false;
+            }
+            
+            // Сохраняем старые значения для сообщения
+            const oldDistance = distance;
+            const oldEarnings = earnings;
+            const oldFuel = fuel;
             
             // Обновляем данные
             distance += km;
             earnings += km * TARIFF_PER_KM;
+            fuel -= fuelNeeded;
+            
+            // Гарантируем, что бензин не станет отрицательным
+            if (fuel < 0) fuel = 0;
             
             updateDisplay();
             
+            // Формируем сообщение
             const earned = Math.round(km * TARIFF_PER_KM);
-            showNotification(`Добавлено ${km.toFixed(1)} км = +${earned}₽`);
+            const message = `Добавлено ${km.toFixed(1)} км = +${earned}₽, потрачено ${fuelNeeded.toFixed(1)}л бензина`;
+            
+            showNotification(message, 'success');
             return true;
         }
         
-        // Изменить количество бензина
-        function changeFuel(inputValue) {
-            // Очищаем пробелы
-            inputValue = inputValue.trim();
+        // Добавить бензин
+        function addFuel(liters) {
+            liters = parseFloat(liters);
             
-            if (!inputValue) {
-                showNotification('Введите значение', true);
-                return false;
-            }
-            
-            let amount = 0;
-            let operation = 'set'; // 'set', 'add', или 'subtract'
-            
-            // Проверяем, начинается ли с + или -
-            if (inputValue.startsWith('+')) {
-                operation = 'add';
-                amount = parseFloat(inputValue.substring(1));
-            } else if (inputValue.startsWith('-')) {
-                operation = 'subtract';
-                amount = parseFloat(inputValue.substring(1));
-            } else {
-                operation = 'set';
-                amount = parseFloat(inputValue);
-            }
-            
-            // Проверяем валидность числа
-            if (isNaN(amount)) {
-                showNotification('Введите корректное число', true);
-                return false;
-            }
-            
-            // Вычисляем новое значение
-            let newFuel = fuel;
-            
-            switch (operation) {
-                case 'add':
-                    newFuel = fuel + amount;
-                    break;
-                case 'subtract':
-                    newFuel = fuel - amount;
-                    break;
-                case 'set':
-                    newFuel = amount;
-                    break;
-            }
-            
-            // Проверяем, чтобы бензин не стал отрицательным
-            if (newFuel < 0) {
-                showNotification('Количество бензина не может быть отрицательным', true);
+            if (isNaN(liters) || liters <= 0) {
+                showNotification('Введите положительное количество литров', 'error');
                 return false;
             }
             
             // Проверяем максимальное значение (например, 1000 литров)
-            if (newFuel > 1000) {
-                showNotification('Слишком большое количество бензина', true);
+            if (fuel + liters > 1000) {
+                showNotification('Слишком большое количество бензина', 'error');
                 return false;
             }
             
             // Сохраняем старое значение для сообщения
             const oldFuel = fuel;
-            fuel = newFuel;
+            
+            // Добавляем бензин
+            fuel += liters;
+            
             updateDisplay();
             
             // Формируем сообщение
-            let message = '';
-            if (operation === 'add') {
-                message = `Добавлено ${amount.toFixed(1)}л бензина`;
-            } else if (operation === 'subtract') {
-                message = `Убрано ${amount.toFixed(1)}л бензина`;
-            } else {
-                message = `Количество бензина установлено: ${fuel.toFixed(1)}л`;
-            }
+            const message = `Добавлено ${liters.toFixed(1)}л бензина. Теперь: ${fuel.toFixed(1)}л`;
             
-            // Добавляем информацию об изменении
-            if (operation !== 'set') {
-                const diff = fuel - oldFuel;
-                if (diff !== 0) {
-                    message += `. Теперь: ${fuel.toFixed(1)}л`;
-                }
-            }
-            
-            showNotification(message);
+            showNotification(message, 'success');
             return true;
         }
         
@@ -876,7 +903,7 @@
                 fuel = 0;
                 
                 updateDisplay();
-                showNotification("Все данные очищены");
+                showNotification("Все данные очищены", 'success');
             }
         }
         
@@ -893,9 +920,9 @@
             fuelMenuOverlay.classList.remove('active');
         }
         
-        // Применить изменения бензина
-        function applyFuelChange() {
-            if (changeFuel(fuelInput.value)) {
+        // Применить добавление бензина
+        function applyFuelAdd() {
+            if (addFuel(fuelInput.value)) {
                 closeFuelMenu();
             }
         }
@@ -903,22 +930,34 @@
         // Открыть меню километров
         function openKmMenu() {
             kmInput.value = '1';
-            updateEarningsDisplay();
+            updateKmMenuCalculations();
             kmMenuOverlay.classList.add('active');
             kmInput.focus();
             kmInput.select();
         }
         
+        // Обновить расчёты в меню километров
+        function updateKmMenuCalculations() {
+            const km = parseFloat(kmInput.value) || 0;
+            const earnings = Math.round(km * TARIFF_PER_KM);
+            const fuelNeeded = km * FUEL_CONSUMPTION_PER_KM;
+            
+            addEarnings.textContent = `${earnings}₽`;
+            fuelRequired.textContent = `${fuelNeeded.toFixed(1)}л`;
+            
+            // Подсвечиваем, если недостаточно бензина
+            if (fuelNeeded > fuel) {
+                fuelRequired.style.color = '#ff5555';
+                kmAddBtn.disabled = true;
+            } else {
+                fuelRequired.style.color = '#4A90E2';
+                kmAddBtn.disabled = false;
+            }
+        }
+        
         // Закрыть меню километров
         function closeKmMenu() {
             kmMenuOverlay.classList.remove('active');
-        }
-        
-        // Обновить отображение заработка в меню км
-        function updateEarningsDisplay() {
-            const km = parseFloat(kmInput.value) || 0;
-            const earnings = Math.round(km * TARIFF_PER_KM);
-            addEarnings.textContent = `${earnings}₽`;
         }
         
         // Обработка добавления километров
@@ -935,7 +974,7 @@
         addKmBtn.addEventListener('click', openKmMenu);
         fuelDisplay.addEventListener('click', openFuelMenu);
         fuelCancelBtn.addEventListener('click', closeFuelMenu);
-        fuelApplyBtn.addEventListener('click', applyFuelChange);
+        fuelApplyBtn.addEventListener('click', applyFuelAdd);
         kmCancelBtn.addEventListener('click', closeKmMenu);
         kmAddBtn.addEventListener('click', handleAddKm);
         
@@ -950,32 +989,20 @@
         
         // Обработка Enter в полях ввода
         fuelInput.addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') applyFuelChange();
+            if (e.key === 'Enter') applyFuelAdd();
         });
         
         kmInput.addEventListener('keyup', function(e) {
             if (e.key === 'Enter') handleAddKm();
         });
         
-        // Автозаполнение примеров при фокусе
-        fuelInput.addEventListener('focus', function() {
-            if (!this.value) {
-                // Показываем подсказку в placeholder
-                this.placeholder = "+10, -5 или 50";
-            }
-        });
-        
-        fuelInput.addEventListener('blur', function() {
-            this.placeholder = "Например: +10, -5 или 50";
-        });
-        
-        // Обновление отображаемого заработка при изменении км
-        kmInput.addEventListener('input', updateEarningsDisplay);
+        // Обновление расчётов при изменении километров
+        kmInput.addEventListener('input', updateKmMenuCalculations);
         
         // Инициализация при загрузке
         window.addEventListener('load', function() {
             loadData();
-            showNotification('Приложение загружено');
+            showNotification('Приложение загружено', 'success');
         });
         
         // Адаптация для маленьких экранов
