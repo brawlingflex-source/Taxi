@@ -44,83 +44,99 @@
             text-align: center;
             position: relative;
             flex-shrink: 0;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .app-title {
             font-size: 22px;
             font-weight: 700;
             letter-spacing: 1px;
+            z-index: 1;
         }
 
         .app-subtitle {
             font-size: 12px;
             opacity: 0.8;
-            margin-top: 3px;
+            margin-top: 2px;
+            z-index: 1;
         }
 
         .rating-btn {
             position: absolute;
-            top: 12px;
-            left: 12px;
+            top: 10px;
+            left: 10px;
             background: linear-gradient(to bottom, #4CAF50, #2E7D32);
             color: white;
             border: none;
-            border-radius: 50px;
-            padding: 8px 16px;
+            border-radius: 8px;
+            padding: 6px 10px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 0 #1B5E20, 0 6px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 0 #1B5E20, 0 4px 6px rgba(0, 0, 0, 0.3);
             transition: all 0.2s;
-            font-size: 13px;
+            font-size: 12px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             z-index: 10;
             white-space: nowrap;
-            min-width: 90px;
+            max-width: 85px;
+            height: 32px;
         }
 
         .rating-btn:hover {
             background: linear-gradient(to bottom, #5CBF60, #3D8B40);
             transform: translateY(1px);
-            box-shadow: 0 3px 0 #1B5E20, 0 5px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 0 #1B5E20, 0 3px 5px rgba(0, 0, 0, 0.3);
         }
 
         .rating-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #1B5E20, 0 2px 5px rgba(0, 0, 0, 0.2);
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #1B5E20, 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .rating-btn i {
+            font-size: 11px;
         }
 
         .clear-btn {
             position: absolute;
-            top: 12px;
-            right: 12px;
+            top: 10px;
+            right: 10px;
             background: linear-gradient(to bottom, #ff5555, #cc0000);
             color: white;
             border: none;
-            border-radius: 50px;
-            padding: 8px 16px;
+            border-radius: 8px;
+            padding: 6px 10px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 0 #990000, 0 6px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 0 #990000, 0 4px 6px rgba(0, 0, 0, 0.3);
             transition: all 0.2s;
-            font-size: 13px;
+            font-size: 12px;
             display: flex;
             align-items: center;
             gap: 5px;
             white-space: nowrap;
-            min-width: 90px;
+            max-width: 85px;
+            height: 32px;
         }
 
         .clear-btn:hover {
             background: linear-gradient(to bottom, #ff6666, #dd0000);
             transform: translateY(1px);
-            box-shadow: 0 3px 0 #990000, 0 5px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 0 #990000, 0 3px 5px rgba(0, 0, 0, 0.3);
         }
 
         .clear-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #990000, 0 2px 5px rgba(0, 0, 0, 0.2);
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #990000, 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .clear-btn i {
+            font-size: 11px;
         }
 
         .main-content {
@@ -389,7 +405,7 @@
         .stars-container {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 30px;
             flex-wrap: wrap;
         }
@@ -399,12 +415,12 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 24px;
+            width: 55px;
+            height: 55px;
+            font-size: 22px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 0 #1A4A7A, 0 6px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 0 #1A4A7A, 0 5px 8px rgba(0, 0, 0, 0.2);
             transition: all 0.2s;
             display: flex;
             align-items: center;
@@ -414,39 +430,39 @@
         .star-btn:hover {
             background: linear-gradient(to bottom, #5CA0F2, #3D7BC0);
             transform: translateY(1px) scale(1.05);
-            box-shadow: 0 3px 0 #1A4A7A, 0 5px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 3px 0 #1A4A7A, 0 4px 6px rgba(0, 0, 0, 0.2);
         }
 
         .star-btn:active {
-            transform: translateY(3px) scale(0.95);
-            box-shadow: 0 1px 0 #1A4A7A, 0 2px 5px rgba(0, 0, 0, 0.2);
+            transform: translateY(2px) scale(0.95);
+            box-shadow: 0 1px 0 #1A4A7A, 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .star-btn.active {
             background: linear-gradient(to bottom, #FFD700, #FFC300);
             color: #333;
-            box-shadow: 0 4px 0 #CC9900, 0 6px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 0 #CC9900, 0 5px 8px rgba(0, 0, 0, 0.2);
         }
 
         .rating-menu-buttons {
             display: flex;
-            gap: 12px;
+            gap: 10px;
         }
 
         .menu-btn {
             flex: 1;
-            padding: 16px;
+            padding: 14px;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             transition: all 0.2s;
-            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
         }
 
         .menu-btn:active {
-            transform: translateY(3px);
+            transform: translateY(2px);
             box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
         }
 
@@ -544,10 +560,10 @@
 
         .fuel-input-field {
             width: 100%;
-            padding: 18px;
+            padding: 15px;
             border: 3px solid #4A90E2;
-            border-radius: 12px;
-            font-size: 24px;
+            border-radius: 10px;
+            font-size: 22px;
             font-weight: 700;
             text-align: center;
             background-color: white;
@@ -564,7 +580,7 @@
 
         .fuel-input-hint {
             text-align: center;
-            margin-top: 10px;
+            margin-top: 8px;
             font-size: 13px;
             color: #888;
             font-style: italic;
@@ -651,7 +667,7 @@
 
         .km-input-field {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             border: 2px solid #333;
             border-radius: 10px;
             font-size: 18px;
@@ -734,13 +750,13 @@
             }
             
             .fuel-input-field {
-                padding: 15px;
+                padding: 12px;
                 font-size: 20px;
             }
             
             .star-btn {
-                width: 50px;
-                height: 50px;
+                width: 48px;
+                height: 48px;
                 font-size: 20px;
             }
         }
@@ -755,10 +771,15 @@
                 font-size: 20px;
             }
             
-            .clear-btn, .rating-btn {
-                padding: 6px 12px;
-                font-size: 12px;
-                min-width: 80px;
+            .rating-btn, .clear-btn {
+                padding: 5px 8px;
+                font-size: 11px;
+                max-width: 75px;
+                height: 30px;
+            }
+            
+            .rating-btn i, .clear-btn i {
+                font-size: 10px;
             }
             
             .distance-value, .earnings-value, .fuel-value {
@@ -780,6 +801,28 @@
                 height: 45px;
                 font-size: 18px;
             }
+            
+            .app-header {
+                padding: 18px 40px;
+            }
+        }
+
+        @media (max-width: 350px) {
+            .app-header {
+                padding: 18px 35px;
+            }
+            
+            .rating-btn, .clear-btn {
+                max-width: 70px;
+                font-size: 10px;
+                padding: 4px 6px;
+            }
+            
+            .star-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -787,7 +830,7 @@
     <div class="app-container">
         <div class="app-header">
             <button class="rating-btn" id="ratingBtn">
-                <i class="fas fa-star"></i> Рейтинг - <span id="ratingValue">0</span>
+                <i class="fas fa-star"></i> <span id="ratingValue">0</span>
             </button>
             <div class="app-title">ТАКСОМЕТР</div>
             <div class="app-subtitle">Учёт поездок и бензина</div>
@@ -942,8 +985,8 @@
     <script>
         // Константы
         const TARIFF_PER_KM = 120;
-        const FUEL_CONSUMPTION_PER_KM = 0.5; // 0.5 литра на 1 км
-        const FUEL_WARNING_THRESHOLD = 5; // Предупреждение при < 5 литров
+        const FUEL_CONSUMPTION_PER_KM = 0.5;
+        const FUEL_WARNING_THRESHOLD = 5;
         
         // Элементы DOM
         const distanceValue = document.querySelector('.distance-value');
@@ -985,7 +1028,7 @@
         let fuel = 0;
         
         // Данные рейтинга
-        let ratings = []; // Массив всех оценок
+        let ratings = [];
         let currentAverageRating = 0;
         let selectedRating = 0;
         
@@ -1072,7 +1115,7 @@
             earningsValue.innerHTML = Math.round(earnings) + '<span class="ruble-unit">₽</span>';
             fuelValue.innerHTML = fuel.toFixed(1) + '<span class="fuel-unit">л</span>';
             
-            // Проверяем уровень бензина для предупреждения
+            // Проверяем уровень бензина
             if (fuel < FUEL_WARNING_THRESHOLD && fuel > 0) {
                 fuelWarning.style.display = 'flex';
                 fuelDisplay.style.backgroundColor = 'rgba(255, 165, 0, 0.1)';
@@ -1091,7 +1134,7 @@
             // Обновляем состояние кнопки добавления километров
             updateAddKmButtonState();
             
-            // Сохраняем в localStorage (кроме рейтинга, который сохраняется отдельно)
+            // Сохраняем в localStorage
             localStorage.setItem('taximeter_distance', distance);
             localStorage.setItem('taximeter_earnings', earnings);
             localStorage.setItem('taximeter_fuel', fuel);
