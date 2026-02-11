@@ -2,1446 +2,807 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таксометр</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>🚖 Таксометр — Михаил и Николай</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-
+        
         body {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            background: #1a1e2b;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 10px;
+            padding: 16px;
         }
-
-        .app-container {
+        
+        #app {
+            max-width: 500px;
             width: 100%;
-            max-width: 380px;
-            height: 95vh;
-            max-height: 750px;
-            background: linear-gradient(to bottom, #FFD700 0%, #FFC300 100%);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            overflow: hidden;
-            position: relative;
-            border: 6px solid #333;
+            background: #0b0e14;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            padding: 24px;
+            color: white;
+        }
+        
+        /* Экран входа */
+        .auth-screen {
             display: flex;
             flex-direction: column;
+            gap: 20px;
         }
-
-        .app-header {
-            background-color: #333;
-            color: white;
-            padding: 18px 15px;
+        
+        .auth-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffd700;
             text-align: center;
-            position: relative;
-            flex-shrink: 0;
-            min-height: 70px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            margin-bottom: 20px;
         }
-
-        .app-title {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            z-index: 1;
-        }
-
-        .app-subtitle {
-            font-size: 12px;
-            opacity: 0.8;
-            margin-top: 2px;
-            z-index: 1;
-        }
-
-        .rating-btn {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: linear-gradient(to bottom, #4CAF50, #2E7D32);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 3px 0 #1B5E20, 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: all 0.2s;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            z-index: 10;
-            white-space: nowrap;
-            max-width: 85px;
-            height: 32px;
-        }
-
-        .rating-btn:hover {
-            background: linear-gradient(to bottom, #5CBF60, #3D8B40);
-            transform: translateY(1px);
-            box-shadow: 0 2px 0 #1B5E20, 0 3px 5px rgba(0, 0, 0, 0.3);
-        }
-
-        .rating-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #1B5E20, 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .rating-btn i {
-            font-size: 11px;
-        }
-
-        .clear-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: linear-gradient(to bottom, #ff5555, #cc0000);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 3px 0 #990000, 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: all 0.2s;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-            max-width: 85px;
-            height: 32px;
-        }
-
-        .clear-btn:hover {
-            background: linear-gradient(to bottom, #ff6666, #dd0000);
-            transform: translateY(1px);
-            box-shadow: 0 2px 0 #990000, 0 3px 5px rgba(0, 0, 0, 0.3);
-        }
-
-        .clear-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #990000, 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .clear-btn i {
-            font-size: 11px;
-        }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 15px;
-            overflow-y: auto;
-        }
-
-        .taxi-icon {
-            font-size: 40px;
-            color: #333;
-            margin-bottom: 15px;
-            animation: pulse 3s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .stats-container {
-            background-color: white;
+        
+        .auth-input {
+            width: 100%;
+            padding: 18px;
+            background: #1e2430;
+            border: 2px solid #2f3542;
             border-radius: 16px;
-            padding: 20px;
+            color: white;
+            font-size: 18px;
+            outline: none;
+        }
+        
+        .auth-input:focus {
+            border-color: #ffd700;
+        }
+        
+        .auth-btn {
             width: 100%;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 15px;
-            flex-shrink: 0;
-        }
-
-        .distance-display, .earnings-display, .fuel-display {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 12px;
-            transition: background-color 0.2s;
-        }
-
-        .fuel-display {
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.3s;
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-
-        .fuel-display:hover {
-            background-color: rgba(74, 144, 226, 0.15);
-            border-color: #4A90E2;
-        }
-
-        .fuel-display:active {
-            transform: scale(0.98);
-        }
-
-        .distance-label, .earnings-label, .fuel-label {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 8px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .distance-value, .earnings-value, .fuel-value {
-            font-size: 36px;
-            font-weight: 800;
-            color: #333;
-            line-height: 1;
-        }
-
-        .unit {
+            padding: 18px;
+            background: #ffd700;
+            color: #0b0e14;
+            border: none;
+            border-radius: 16px;
             font-size: 20px;
-            color: #888;
-            margin-left: 3px;
-            font-weight: 600;
-        }
-
-        .ruble-unit {
-            color: #4CAF50;
-            font-weight: bold;
-            margin-left: 5px;
-            font-size: 32px;
-        }
-
-        .fuel-unit {
-            color: #4A90E2;
-            font-weight: bold;
-            margin-left: 5px;
-            font-size: 32px;
-        }
-
-        .fuel-warning {
-            color: #ff5555;
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            opacity: 0.8;
-        }
-
-        .info-panel {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 12px;
-            padding: 15px;
-            width: 100%;
-            margin-top: 10px;
-            text-align: center;
-            font-size: 13px;
-            color: #666;
-            line-height: 1.4;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            flex-shrink: 0;
-        }
-
-        .tariff-info {
-            background-color: #333;
-            color: #FFD700;
-            padding: 12px;
-            border-radius: 10px;
-            margin-top: 10px;
-            font-weight: 600;
-            font-size: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .fuel-rate {
-            color: #4A90E2;
-            font-size: 13px;
-        }
-
-        .add-km-btn {
-            background: linear-gradient(to bottom, #4CAF50, #2E7D32);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 25px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #1B5E20, 0 6px 10px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 15px;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .add-km-btn:hover {
-            background: linear-gradient(to bottom, #5CBF60, #3D8B40);
-            transform: translateY(1px);
-            box-shadow: 0 3px 0 #1B5E20, 0 5px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .add-km-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #1B5E20, 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .add-km-btn:disabled {
-            background: linear-gradient(to bottom, #cccccc, #999999);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 0 4px 0 #666666, 0 6px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Рейтинг меню */
-        .rating-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            padding: 15px;
-        }
-
-        .rating-menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .rating-menu-container {
-            background: linear-gradient(to bottom, #FFD700 0%, #FFC300 100%);
-            border-radius: 20px;
-            padding: 25px;
-            width: 100%;
-            max-width: 350px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            transform: translateY(30px);
-            transition: transform 0.4s;
-            border: 4px solid #333;
-        }
-
-        .rating-menu-overlay.active .rating-menu-container {
-            transform: translateY(0);
-        }
-
-        .rating-menu-title {
-            font-size: 22px;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
             font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
         }
-
-        .current-rating {
-            background-color: #333;
-            color: #FFD700;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 16px;
+        
+        .auth-btn:active {
+            transform: scale(0.97);
+            background: #ffed4a;
+        }
+        
+        /* Интерфейс таксометра - Михаил */
+        .taximeter-screen {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 20px;
         }
-
-        .rating-stars {
-            font-size: 28px;
-            color: #FFD700;
-            letter-spacing: 5px;
-        }
-
-        .rating-value {
-            font-size: 24px;
-            font-weight: 800;
-        }
-
-        .rating-count {
-            font-size: 14px;
-            color: #cccccc;
-        }
-
-        .rating-instruction {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            text-align: center;
-            font-size: 14px;
-            color: #666;
-            line-height: 1.5;
-        }
-
-        .stars-container {
+        
+        .header {
             display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
         }
-
-        .star-btn {
-            background: linear-gradient(to bottom, #4A90E2, #2C6DB0);
+        
+        .user-name {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffd700;
+        }
+        
+        .logout-btn {
+            background: #2f3542;
             color: white;
             border: none;
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            font-size: 22px;
-            font-weight: bold;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 16px;
             cursor: pointer;
-            box-shadow: 0 4px 0 #1A4A7A, 0 5px 8px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s;
+        }
+        
+        /* Рейтинг звёздами */
+        .rating-container {
+            background: linear-gradient(145deg, #151a24, #0f131c);
+            padding: 20px;
+            border-radius: 24px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 16px;
         }
-
-        .star-btn:hover {
-            background: linear-gradient(to bottom, #5CA0F2, #3D7BC0);
-            transform: translateY(1px) scale(1.05);
-            box-shadow: 0 3px 0 #1A4A7A, 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .star-btn:active {
-            transform: translateY(2px) scale(0.95);
-            box-shadow: 0 1px 0 #1A4A7A, 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .star-btn.active {
-            background: linear-gradient(to bottom, #FFD700, #FFC300);
-            color: #333;
-            box-shadow: 0 4px 0 #CC9900, 0 5px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .rating-menu-buttons {
+        
+        .rating-stars {
             display: flex;
+            gap: 8px;
+        }
+        
+        .star {
+            font-size: 32px;
+            color: #3a4050;
+        }
+        
+        .star.filled {
+            color: #ffd700;
+        }
+        
+        .rating-value {
+            font-size: 20px;
+            color: #a0a8b8;
+        }
+        
+        /* Карточки статистики */
+        .stats-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(145deg, #1e2430, #151a24);
+            padding: 24px;
+            border-radius: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #2f3542;
+        }
+        
+        .stat-label {
+            font-size: 18px;
+            color: #a0a8b8;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffd700;
+        }
+        
+        .stat-unit {
+            font-size: 16px;
+            color: #a0a8b8;
+            margin-left: 8px;
+        }
+        
+        /* Интерфейс Николая */
+        .manager-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .manager-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .driver-status {
+            background: #1e2430;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .driver-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 12px;
+        }
+        
+        .driver-stats {
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            font-size: 16px;
+            flex-wrap: wrap;
             gap: 10px;
         }
-
-        .menu-btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 15px;
-            transition: all 0.2s;
-            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .menu-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .apply-btn {
-            background: linear-gradient(to bottom, #4CAF50, #2E7D32);
-            color: white;
-        }
-
-        .cancel-btn {
-            background: linear-gradient(to bottom, #f0f0f0, #ccc);
-            color: #333;
-        }
-
-        /* Остальные меню */
-        .fuel-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1001;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            padding: 15px;
-        }
-
-        .fuel-menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .fuel-menu-container {
-            background: linear-gradient(to bottom, #FFD700 0%, #FFC300 100%);
-            border-radius: 20px;
-            padding: 25px;
-            width: 100%;
-            max-width: 350px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            transform: translateY(30px);
-            transition: transform 0.4s;
-            border: 4px solid #333;
-        }
-
-        .fuel-menu-overlay.active .fuel-menu-container {
-            transform: translateY(0);
-        }
-
-        .fuel-menu-title {
-            font-size: 22px;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 700;
-        }
-
-        .fuel-current {
-            background-color: #333;
-            color: #FFD700;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .fuel-instruction {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 14px;
-            color: #666;
-            line-height: 1.5;
-        }
-
-        .fuel-input-group {
-            margin-bottom: 25px;
-        }
-
-        .fuel-input-label {
-            display: block;
-            margin-bottom: 10px;
-            color: #333;
-            font-weight: 600;
-            font-size: 16px;
-            text-align: center;
-        }
-
-        .fuel-input-field {
-            width: 100%;
-            padding: 15px;
-            border: 3px solid #4A90E2;
-            border-radius: 10px;
-            font-size: 22px;
-            font-weight: 700;
-            text-align: center;
-            background-color: white;
-            color: #333;
-            transition: all 0.3s;
-        }
-
-        .fuel-input-field:focus {
-            outline: none;
-            border-color: #2C6DB0;
-            box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.3);
-            transform: scale(1.02);
-        }
-
-        .fuel-input-hint {
-            text-align: center;
-            margin-top: 8px;
-            font-size: 13px;
-            color: #888;
-            font-style: italic;
-        }
-
-        /* Меню километров */
-        .km-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1002;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            padding: 15px;
-        }
-
-        .km-menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .km-menu-container {
-            background: linear-gradient(to bottom, #FFD700 0%, #FFC300 100%);
-            border-radius: 20px;
-            padding: 25px;
-            width: 100%;
-            max-width: 350px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            transform: translateY(30px);
-            transition: transform 0.4s;
-            border: 4px solid #333;
-        }
-
-        .km-menu-overlay.active .km-menu-container {
-            transform: translateY(0);
-        }
-
-        .km-menu-title {
-            font-size: 22px;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 700;
-        }
-
-        .rate-display {
-            background-color: #333;
-            color: #FFD700;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 15px;
+        
+        .control-panel {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 20px;
         }
-
-        .fuel-consumption {
-            color: #4A90E2;
-            font-size: 14px;
+        
+        .control-section {
+            background: linear-gradient(145deg, #1e2430, #151a24);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid #2f3542;
         }
-
-        .input-group {
+        
+        .control-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffd700;
             margin-bottom: 20px;
         }
-
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 15px;
-            text-align: center;
-        }
-
-        .km-input-field {
+        
+        .control-input {
             width: 100%;
-            padding: 14px;
-            border: 2px solid #333;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            text-align: center;
-            background-color: white;
-        }
-
-        .km-input-field:focus {
-            outline: none;
-            border-color: #ff6600;
-            box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2);
-        }
-
-        .fuel-required {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .fuel-required-value {
-            color: #4A90E2;
-            font-weight: bold;
-        }
-
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: linear-gradient(to right, #4CAF50, #2E7D32);
+            padding: 16px;
+            background: #0b0e14;
+            border: 2px solid #2f3542;
+            border-radius: 16px;
             color: white;
-            padding: 12px 25px;
-            border-radius: 50px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            transition: all 0.4s;
-            z-index: 1003;
-            font-weight: 600;
-            max-width: 90%;
-            text-align: center;
+            font-size: 18px;
+            margin-bottom: 16px;
         }
-
-        .notification.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        
+        .control-btn {
+            width: 100%;
+            padding: 16px;
+            background: #ffd700;
+            color: #0b0e14;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 12px;
         }
-
-        .error-notification {
-            background: linear-gradient(to right, #ff5555, #cc0000);
+        
+        .control-btn:active {
+            transform: scale(0.97);
+            background: #ffed4a;
         }
-
-        .warning-notification {
-            background: linear-gradient(to right, #FFA500, #FF8C00);
+        
+        .control-btn.secondary {
+            background: #2f3542;
+            color: white;
         }
-
-        @media (max-height: 700px) {
-            .app-container {
-                height: 97vh;
-                max-height: 97vh;
-            }
-            
-            .stats-container {
-                padding: 15px;
-            }
-            
-            .distance-value, .earnings-value, .fuel-value {
-                font-size: 32px;
-            }
-            
-            .taxi-icon {
-                font-size: 35px;
-                margin-bottom: 10px;
-            }
-            
-            .info-panel {
-                padding: 12px;
-                font-size: 12px;
-            }
-            
-            .fuel-input-field {
-                padding: 12px;
-                font-size: 20px;
-            }
-            
-            .star-btn {
-                width: 48px;
-                height: 48px;
-                font-size: 20px;
-            }
+        
+        .control-btn.danger {
+            background: #dc3545;
+            color: white;
         }
-
-        @media (max-width: 400px) {
-            .app-container {
-                border-radius: 15px;
-                border-width: 4px;
-            }
-            
-            .app-title {
-                font-size: 20px;
-            }
-            
-            .rating-btn, .clear-btn {
-                padding: 5px 8px;
-                font-size: 11px;
-                max-width: 75px;
-                height: 30px;
-            }
-            
-            .rating-btn i, .clear-btn i {
-                font-size: 10px;
-            }
-            
-            .distance-value, .earnings-value, .fuel-value {
-                font-size: 32px;
-            }
-            
-            .ruble-unit, .fuel-unit {
-                font-size: 28px;
-            }
-            
-            .fuel-menu-container,
-            .km-menu-container,
-            .rating-menu-container {
-                padding: 20px;
-            }
-            
-            .star-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 18px;
-            }
-            
-            .app-header {
-                padding: 18px 40px;
-            }
+        
+        .control-btn.warning {
+            background: #ffc107;
+            color: #0b0e14;
         }
-
-        @media (max-width: 350px) {
-            .app-header {
-                padding: 18px 35px;
-            }
-            
-            .rating-btn, .clear-btn {
-                max-width: 70px;
-                font-size: 10px;
-                padding: 4px 6px;
-            }
-            
-            .star-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
-            }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        
+        .button-group .control-btn {
+            margin-bottom: 0;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #ffd700;
+            padding: 16px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            z-index: 1000;
+            border: 1px solid #ffd700;
+            animation: slideUp 0.3s;
+        }
+        
+        @keyframes slideUp {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="app-header">
-            <button class="rating-btn" id="ratingBtn">
-                <i class="fas fa-star"></i> <span id="ratingValue">0.00</span>
-            </button>
-            <div class="app-title">ТАКСОМЕТР</div>
-            <div class="app-subtitle">Учёт поездок и бензина</div>
-            <button class="clear-btn" id="clearBtn">
-                <i class="fas fa-trash"></i> Очистить
-            </button>
+    <div id="app">
+        <!-- Экран входа -->
+        <div id="auth-screen" class="auth-screen">
+            <div class="auth-title">🚖 ТАКСОМЕТР</div>
+            <input type="text" id="username-input" class="auth-input" placeholder="Введите имя (Михаил / Николай)" autocomplete="off">
+            <button id="login-btn" class="auth-btn">Войти</button>
         </div>
-        
-        <div class="main-content">
-            <div class="taxi-icon">
-                <i class="fas fa-taxi"></i>
+
+        <!-- Интерфейс Михаила (Водитель) -->
+        <div id="mikhail-screen" class="taximeter-screen hidden">
+            <div class="header">
+                <span class="user-name">🚖 Михаил</span>
+                <button id="logout-btn-mikhail" class="logout-btn">Выйти</button>
             </div>
             
-            <div class="stats-container">
-                <div class="distance-display">
-                    <div class="distance-label">
-                        <i class="fas fa-road"></i>Проехано за сегодня:
+            <!-- Рейтинг звёздами -->
+            <div class="rating-container">
+                <div class="rating-stars" id="star-rating"></div>
+                <span class="rating-value" id="rating-text">0.0 ★</span>
+            </div>
+            
+            <!-- Статистика -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">📊 Проехано сегодня</span>
+                    <div>
+                        <span class="stat-value" id="km-today">0.00</span>
+                        <span class="stat-unit">км</span>
                     </div>
-                    <div class="distance-value">0.00<span class="unit">км</span></div>
                 </div>
                 
-                <div class="earnings-display">
-                    <div class="earnings-label">
-                        <i class="fas fa-money-bill-wave"></i>Заработано:
+                <div class="stat-card">
+                    <span class="stat-label">💰 Заработано</span>
+                    <div>
+                        <span class="stat-value" id="earned-today">0.00</span>
+                        <span class="stat-unit">₽</span>
                     </div>
-                    <div class="earnings-value">0<span class="ruble-unit">₽</span></div>
                 </div>
                 
-                <div class="fuel-display" id="fuelDisplay">
-                    <div class="fuel-label">
-                        <i class="fas fa-gas-pump"></i>Бензин:
-                    </div>
-                    <div class="fuel-value">0.00<span class="fuel-unit">л</span></div>
-                    <div class="fuel-warning" id="fuelWarning" style="display: none;">
-                        <i class="fas fa-exclamation-triangle"></i> Мало бензина!
+                <div class="stat-card">
+                    <span class="stat-label">⛽ Бензин</span>
+                    <div>
+                        <span class="stat-value" id="fuel-left">0.00</span>
+                        <span class="stat-unit">л</span>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Интерфейс Николая (Менеджер) -->
+        <div id="nikolay-screen" class="manager-screen hidden">
+            <div class="header">
+                <span class="user-name">📋 Николай</span>
+                <button id="logout-btn-nikolay" class="logout-btn">Выйти</button>
+            </div>
             
-            <button class="add-km-btn" id="addKmBtn">
-                <i class="fas fa-plus-circle"></i> Добавить километры
-            </button>
+            <!-- Статус Михаила -->
+            <div class="driver-status">
+                <div class="driver-name">🚖 Михаил</div>
+                <div class="driver-stats">
+                    <span>⭐ <span id="nikolay-rating">0.0</span></span>
+                    <span>📊 <span id="nikolay-km">0.00</span> км</span>
+                    <span>💰 <span id="nikolay-money">0.00</span> ₽</span>
+                    <span>⛽ <span id="nikolay-fuel">0.00</span> л</span>
+                </div>
+            </div>
             
-            <div class="info-panel">
-                <p><i class="fas fa-info-circle"></i> Нажмите на "Бензин" чтобы добавить литры</p>
-                <div class="tariff-info">
-                    <div><i class="fas fa-bolt"></i> Тариф: 120 рублей за 1 км (120₽)</div>
-                    <div class="fuel-rate"><i class="fas fa-gas-pump"></i> Расход: 1 км = 0.5л бензина</div>
+            <div class="control-panel">
+                <!-- Добавление километров -->
+                <div class="control-section">
+                    <div class="control-title">➕ Добавить километры</div>
+                    <input type="number" id="add-km-input" class="control-input" placeholder="Километры" step="0.01" min="0">
+                    <button id="add-km-btn" class="control-btn">Добавить км</button>
+                    
+                    <!-- Кнопка очистки километров -->
+                    <button id="clear-km-btn" class="control-btn danger">🧹 Очистить километры до 0</button>
+                </div>
+                
+                <!-- Добавление бензина -->
+                <div class="control-section">
+                    <div class="control-title">⛽ Добавить бензин</div>
+                    <input type="number" id="add-fuel-input" class="control-input" placeholder="Литры" step="0.01" min="0">
+                    <button id="add-fuel-btn" class="control-btn secondary">Добавить бензин</button>
+                </div>
+                
+                <!-- Управление заработком -->
+                <div class="control-section">
+                    <div class="control-title">💰 Управление заработком</div>
+                    <!-- Кнопка очистки заработка -->
+                    <button id="clear-earned-btn" class="control-btn danger">🧹 Очистить заработок до 0</button>
+                </div>
+                
+                <!-- Добавление рейтинга -->
+                <div class="control-section">
+                    <div class="control-title">⭐ Оценить поездку</div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                        <button id="rate-1" class="control-btn" style="flex: 1; background: #3a4050;">1★</button>
+                        <button id="rate-2" class="control-btn" style="flex: 1; background: #3a4050;">2★</button>
+                        <button id="rate-3" class="control-btn" style="flex: 1; background: #3a4050;">3★</button>
+                        <button id="rate-4" class="control-btn" style="flex: 1; background: #3a4050;">4★</button>
+                        <button id="rate-5" class="control-btn" style="flex: 1; background: #3a4050;">5★</button>
+                    </div>
+                    
+                    <!-- Кнопка очистки рейтинга -->
+                    <button id="clear-rating-btn" class="control-btn danger">🧹 Очистить рейтинг до 0</button>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Меню рейтинга -->
-    <div class="rating-menu-overlay" id="ratingMenuOverlay">
-        <div class="rating-menu-container">
-            <h2 class="rating-menu-title">Оценка водителя</h2>
-            
-            <div class="current-rating">
-                <div class="rating-stars" id="ratingStarsDisplay">
-                    ★★★★★
-                </div>
-                <div class="rating-value" id="currentRatingValue">0.00</div>
-                <div class="rating-count" id="ratingCount">оценок: 0</div>
-            </div>
-            
-            <div class="rating-instruction">
-                <p><strong>Выберите оценку от 1 до 5:</strong></p>
-                <p>5 - отлично, 1 - плохо</p>
-                <p>Рейтинг рассчитывается как среднее всех оценок</p>
-            </div>
-            
-            <div class="stars-container">
-                <button class="star-btn" data-rating="1">1</button>
-                <button class="star-btn" data-rating="2">2</button>
-                <button class="star-btn" data-rating="3">3</button>
-                <button class="star-btn" data-rating="4">4</button>
-                <button class="star-btn" data-rating="5">5</button>
-            </div>
-            
-            <div class="rating-menu-buttons">
-                <button class="menu-btn cancel-btn" id="ratingCancelBtn">Отмена</button>
-                <button class="menu-btn apply-btn" id="ratingApplyBtn">Оценить</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Меню для добавления бензина -->
-    <div class="fuel-menu-overlay" id="fuelMenuOverlay">
-        <div class="fuel-menu-container">
-            <h2 class="fuel-menu-title">Добавить бензин</h2>
-            
-            <div class="fuel-current" id="fuelCurrent">
-                Текущее количество: <span id="currentFuelValue">0.00</span>л
-            </div>
-            
-            <div class="fuel-instruction">
-                <p><strong>Введите количество литров для добавления:</strong></p>
-                <p>Можно добавлять только положительные числа.</p>
-                <p>Чтобы убавить бензин - добавьте километры поездки.</p>
-            </div>
-            
-            <div class="fuel-input-group">
-                <label class="fuel-input-label" for="fuelInput">
-                    Сколько литров добавить?
-                </label>
-                <input type="number" id="fuelInput" class="fuel-input-field" placeholder="Например: 10.50 или 5.75" min="0" step="0.01" autocomplete="off">
-                <div class="fuel-input-hint">
-                    Только положительные числа, можно вводить сотые (например: 10.50)
-                </div>
-            </div>
-            
-            <div class="fuel-menu-buttons">
-                <button class="menu-btn cancel-btn" id="fuelCancelBtn">Отмена</button>
-                <button class="menu-btn apply-btn" id="fuelApplyBtn">Добавить</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Меню для добавления километров -->
-    <div class="km-menu-overlay" id="kmMenuOverlay">
-        <div class="km-menu-container">
-            <h2 class="km-menu-title">Добавить километры</h2>
-            
-            <div class="rate-display">
-                <div><i class="fas fa-calculator"></i> 1 км = 120 рублей (120₽)</div>
-                <div class="fuel-consumption"><i class="fas fa-gas-pump"></i> 1 км = 0.5л бензина</div>
-            </div>
-            
-            <div class="input-group">
-                <label class="input-label" for="kmInput">Сколько километров (км) добавить?</label>
-                <input type="number" id="kmInput" class="km-input-field" placeholder="0" min="0" step="0.01" value="1.00">
-                <div style="text-align: center; margin-top: 5px; font-size: 14px; color: #666;">
-                    Добавится: <span id="addEarnings" style="color: #2E7D32; font-weight: bold;">120₽</span>
-                </div>
-                <div class="fuel-required">
-                    Потратится: <span id="fuelRequired" class="fuel-required-value">0.50л</span> бензина
-                </div>
-            </div>
-            
-            <div class="fuel-menu-buttons">
-                <button class="menu-btn cancel-btn" id="kmCancelBtn">Отмена</button>
-                <button class="menu-btn apply-btn" id="kmAddBtn">Добавить</button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="notification" id="notification">
-        Изменения сохранены!
     </div>
 
     <script>
-        // Константы
-        const TARIFF_PER_KM = 120;
-        const FUEL_CONSUMPTION_PER_KM = 0.5;
-        const FUEL_WARNING_THRESHOLD = 5;
+        // ========== FIREBASE КОНФИГ ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyAu_wfaRhTsWNbsyFYmEigopqJck7ynxlU",
+            authDomain: "messeger-0wo2h4.firebaseapp.com",
+            databaseURL: "https://messeger-0wo2h4-default-rtdb.firebaseio.com",
+            projectId: "messeger-0wo2h4",
+            storageBucket: "messeger-0wo2h4.firebasestorage.app",
+            messagingSenderId: "1057251395030",
+            appId: "1:1057251395030:web:86f8f718ed938055e29077"
+        };
+
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        // ========== КОНСТАНТЫ ==========
+        const TARIFF = 120;
+        const FUEL_CONSUMPTION = 0.5;
+        const MIKHAIL_ID = 'mikhail_driver';
+
+        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
+        let currentUserName = '';
+        let mikhailListener = null;
+
+        // ========== DOM ЭЛЕМЕНТЫ ==========
+        const authScreen = document.getElementById('auth-screen');
+        const mikhailScreen = document.getElementById('mikhail-screen');
+        const nikolayScreen = document.getElementById('nikolay-screen');
+        const usernameInput = document.getElementById('username-input');
+        const loginBtn = document.getElementById('login-btn');
+
+        // Элементы Михаила
+        const kmTodayEl = document.getElementById('km-today');
+        const earnedTodayEl = document.getElementById('earned-today');
+        const fuelLeftEl = document.getElementById('fuel-left');
+        const ratingTextEl = document.getElementById('rating-text');
+        const starRatingEl = document.getElementById('star-rating');
+
+        // Элементы Николая
+        const nikolayRatingEl = document.getElementById('nikolay-rating');
+        const nikolayKmEl = document.getElementById('nikolay-km');
+        const nikolayMoneyEl = document.getElementById('nikolay-money');
+        const nikolayFuelEl = document.getElementById('nikolay-fuel');
         
-        // Элементы DOM
-        const distanceValue = document.querySelector('.distance-value');
-        const earningsValue = document.querySelector('.earnings-value');
-        const fuelValue = document.querySelector('.fuel-value');
-        const fuelWarning = document.getElementById('fuelWarning');
-        const ratingBtn = document.getElementById('ratingBtn');
-        const ratingValue = document.getElementById('ratingValue');
-        const clearBtn = document.getElementById('clearBtn');
-        const addKmBtn = document.getElementById('addKmBtn');
-        const fuelDisplay = document.getElementById('fuelDisplay');
+        // ========== ФУНКЦИИ ==========
         
-        // Рейтинг элементы
-        const ratingMenuOverlay = document.getElementById('ratingMenuOverlay');
-        const ratingCancelBtn = document.getElementById('ratingCancelBtn');
-        const ratingApplyBtn = document.getElementById('ratingApplyBtn');
-        const ratingStarsDisplay = document.getElementById('ratingStarsDisplay');
-        const currentRatingValue = document.getElementById('currentRatingValue');
-        const ratingCount = document.getElementById('ratingCount');
-        const starButtons = document.querySelectorAll('.star-btn');
-        
-        // Остальные элементы
-        const fuelMenuOverlay = document.getElementById('fuelMenuOverlay');
-        const fuelCancelBtn = document.getElementById('fuelCancelBtn');
-        const fuelApplyBtn = document.getElementById('fuelApplyBtn');
-        const fuelInput = document.getElementById('fuelInput');
-        const currentFuelValue = document.getElementById('currentFuelValue');
-        const kmMenuOverlay = document.getElementById('kmMenuOverlay');
-        const kmInput = document.getElementById('kmInput');
-        const kmCancelBtn = document.getElementById('kmCancelBtn');
-        const kmAddBtn = document.getElementById('kmAddBtn');
-        const addEarnings = document.getElementById('addEarnings');
-        const fuelRequired = document.getElementById('fuelRequired');
-        const notification = document.getElementById('notification');
-        
-        // Данные
-        let distance = 0;
-        let earnings = 0;
-        let fuel = 0;
-        
-        // Данные рейтинга
-        let ratings = [];
-        let currentAverageRating = 0;
-        let selectedRating = 0;
-        
-        // Функция округления до сотых
-        function roundToHundredths(value) {
-            return Math.round(value * 100) / 100;
+        function showToast(text) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = text;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
-        
-        // Загрузить данные рейтинга из localStorage
-        function loadRatingData() {
-            const savedRatings = localStorage.getItem('taximeter_ratings');
-            if (savedRatings) {
-                ratings = JSON.parse(savedRatings);
-                calculateAverageRating();
-            } else {
-                ratings = [];
-                currentAverageRating = 0;
-            }
-            updateRatingDisplay();
-        }
-        
-        // Сохранить данные рейтинга в localStorage
-        function saveRatingData() {
-            localStorage.setItem('taximeter_ratings', JSON.stringify(ratings));
-        }
-        
-        // Рассчитать средний рейтинг (с округлением до сотых)
-        function calculateAverageRating() {
-            if (ratings.length === 0) {
-                currentAverageRating = 0;
-                return;
-            }
-            
-            const sum = ratings.reduce((total, rating) => total + rating, 0);
-            currentAverageRating = roundToHundredths(sum / ratings.length);
-        }
-        
-        // Обновить отображение рейтинга
-        function updateRatingDisplay() {
-            // Обновляем значение в кнопке (до сотых)
-            ratingValue.textContent = currentAverageRating.toFixed(2);
-            
-            // Обновляем значение в меню (до сотых)
-            currentRatingValue.textContent = currentAverageRating.toFixed(2);
-            ratingCount.textContent = `оценок: ${ratings.length}`;
-            
-            // Обновляем отображение звезд
-            updateStarsDisplay();
-        }
-        
-        // Обновить отображение звезд
-        function updateStarsDisplay() {
-            let starsHTML = '';
-            const fullStars = Math.floor(currentAverageRating);
-            const decimalPart = currentAverageRating - fullStars;
-            
-            // Добавляем полные звезды
-            for (let i = 0; i < fullStars; i++) {
-                starsHTML += '★';
-            }
-            
-            // Добавляем частичную звезду если нужно
-            if (decimalPart >= 0.75) {
-                starsHTML += '★';
-            } else if (decimalPart >= 0.25) {
-                starsHTML += '★';
-            } else if (decimalPart > 0) {
-                // Маленькая часть - показываем пустую
-            }
-            
-            // Добавляем пустые звезды
-            const totalStars = 5;
-            const emptyStars = totalStars - starsHTML.length;
-            for (let i = 0; i < emptyStars; i++) {
-                starsHTML += '☆';
-            }
-            
-            ratingStarsDisplay.innerHTML = starsHTML;
-        }
-        
-        // Добавить новую оценку
-        function addRating(newRating) {
-            ratings.push(newRating);
-            calculateAverageRating();
-            saveRatingData();
-            updateRatingDisplay();
-            
-            showNotification(`Спасибо за оценку ${newRating}! Новый рейтинг: ${currentAverageRating.toFixed(2)}`, 'success');
-        }
-        
-        // Обновление отображения основных данных
-        function updateDisplay() {
-            // Округляем до сотых перед отображением
-            distanceValue.innerHTML = roundToHundredths(distance).toFixed(2) + '<span class="unit">км</span>';
-            earningsValue.innerHTML = Math.round(earnings) + '<span class="ruble-unit">₽</span>';
-            fuelValue.innerHTML = roundToHundredths(fuel).toFixed(2) + '<span class="fuel-unit">л</span>';
-            
-            // Проверяем уровень бензина
-            if (fuel < FUEL_WARNING_THRESHOLD && fuel > 0) {
-                fuelWarning.style.display = 'flex';
-                fuelDisplay.style.backgroundColor = 'rgba(255, 165, 0, 0.1)';
-                fuelDisplay.style.borderColor = '#FFA500';
-            } else if (fuel <= 0) {
-                fuelWarning.style.display = 'flex';
-                fuelWarning.innerHTML = '<i class="fas fa-exclamation-circle"></i> Бензин закончился!';
-                fuelDisplay.style.backgroundColor = 'rgba(255, 85, 85, 0.1)';
-                fuelDisplay.style.borderColor = '#ff5555';
-            } else {
-                fuelWarning.style.display = 'none';
-                fuelDisplay.style.backgroundColor = '';
-                fuelDisplay.style.borderColor = 'transparent';
-            }
-            
-            // Обновляем состояние кнопки добавления километров
-            updateAddKmButtonState();
-            
-            // Сохраняем в localStorage (с округлением)
-            localStorage.setItem('taximeter_distance', roundToHundredths(distance));
-            localStorage.setItem('taximeter_earnings', earnings);
-            localStorage.setItem('taximeter_fuel', roundToHundredths(fuel));
-        }
-        
-        // Обновление состояния кнопки добавления километров
-        function updateAddKmButtonState() {
-            const fuelNeeded = FUEL_CONSUMPTION_PER_KM;
-            
-            if (fuel < fuelNeeded) {
-                addKmBtn.disabled = true;
-                addKmBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Недостаточно бензина';
-            } else {
-                addKmBtn.disabled = false;
-                addKmBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Добавить километры';
-            }
-        }
-        
-        // Загрузить основные данные из localStorage
-        function loadData() {
-            distance = parseFloat(localStorage.getItem('taximeter_distance')) || 0;
-            earnings = parseFloat(localStorage.getItem('taximeter_earnings')) || 0;
-            fuel = parseFloat(localStorage.getItem('taximeter_fuel')) || 0;
-            updateDisplay();
-        }
-        
-        // Показать уведомление
-        function showNotification(message, type = 'success') {
-            notification.textContent = message;
-            notification.className = 'notification';
-            
-            if (type === 'error') {
-                notification.classList.add('error-notification');
-            } else if (type === 'warning') {
-                notification.classList.add('warning-notification');
-            }
-            
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Добавить километры (с расходом бензина)
-        function addKilometers(km) {
-            km = parseFloat(km);
-            
-            if (isNaN(km) || km <= 0) {
-                showNotification('Введите корректное количество километров', 'error');
-                return false;
-            }
-            
-            const fuelNeeded = roundToHundredths(km * FUEL_CONSUMPTION_PER_KM);
-            
-            if (fuel < fuelNeeded) {
-                showNotification(`Недостаточно бензина! Нужно: ${fuelNeeded.toFixed(2)}л, есть: ${roundToHundredths(fuel).toFixed(2)}л`, 'error');
-                return false;
-            }
-            
-            const oldDistance = distance;
-            const oldEarnings = earnings;
-            const oldFuel = fuel;
-            
-            distance = roundToHundredths(distance + km);
-            earnings += Math.round(km * TARIFF_PER_KM);
-            fuel = roundToHundredths(fuel - fuelNeeded);
-            
-            if (fuel < 0) fuel = 0;
-            
-            updateDisplay();
-            
-            const earned = Math.round(km * TARIFF_PER_KM);
-            const message = `Добавлено ${km.toFixed(2)} км = +${earned}₽, потрачено ${fuelNeeded.toFixed(2)}л бензина`;
-            
-            showNotification(message, 'success');
-            return true;
-        }
-        
-        // Добавить бензин
-        function addFuel(liters) {
-            liters = parseFloat(liters);
-            
-            if (isNaN(liters) || liters <= 0) {
-                showNotification('Введите положительное количество литров', 'error');
-                return false;
-            }
-            
-            if (fuel + liters > 1000) {
-                showNotification('Слишком большое количество бензина', 'error');
-                return false;
-            }
-            
-            const oldFuel = fuel;
-            fuel = roundToHundredths(fuel + liters);
-            
-            updateDisplay();
-            
-            const message = `Добавлено ${liters.toFixed(2)}л бензина. Теперь: ${fuel.toFixed(2)}л`;
-            
-            showNotification(message, 'success');
-            return true;
-        }
-        
-        // Очистить данные (кроме рейтинга)
-        function clearData() {
-            if (confirm("Очистить все данные? Это действие нельзя отменить. Рейтинг останется сохранённым.")) {
-                distance = 0;
-                earnings = 0;
-                fuel = 0;
-                
-                updateDisplay();
-                showNotification("Данные очищены. Рейтинг сохранён.", 'success');
-            }
-        }
-        
-        // Открыть меню рейтинга
-        function openRatingMenu() {
-            selectedRating = 0;
-            
-            // Сбросить выделение кнопок
-            starButtons.forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            ratingMenuOverlay.classList.add('active');
-        }
-        
-        // Закрыть меню рейтинга
-        function closeRatingMenu() {
-            ratingMenuOverlay.classList.remove('active');
-        }
-        
-        // Применить оценку
-        function applyRating() {
-            if (selectedRating === 0) {
-                showNotification('Выберите оценку от 1 до 5', 'error');
-                return;
-            }
-            
-            addRating(selectedRating);
-            closeRatingMenu();
-        }
-        
-        // Открыть меню бензина
-        function openFuelMenu() {
-            currentFuelValue.textContent = fuel.toFixed(2);
-            fuelInput.value = '';
-            fuelMenuOverlay.classList.add('active');
-            fuelInput.focus();
-        }
-        
-        // Закрыть меню бензина
-        function closeFuelMenu() {
-            fuelMenuOverlay.classList.remove('active');
-        }
-        
-        // Применить добавление бензина
-        function applyFuelAdd() {
-            if (addFuel(fuelInput.value)) {
-                closeFuelMenu();
-            }
-        }
-        
-        // Открыть меню километров
-        function openKmMenu() {
-            kmInput.value = '1.00';
-            updateKmMenuCalculations();
-            kmMenuOverlay.classList.add('active');
-            kmInput.focus();
-            kmInput.select();
-        }
-        
-        // Обновить расчёты в меню километров (с округлением до сотых)
-        function updateKmMenuCalculations() {
-            const km = parseFloat(kmInput.value) || 0;
-            const earnings = Math.round(km * TARIFF_PER_KM);
-            const fuelNeeded = roundToHundredths(km * FUEL_CONSUMPTION_PER_KM);
-            
-            addEarnings.textContent = `${earnings}₽`;
-            fuelRequired.textContent = `${fuelNeeded.toFixed(2)}л`;
-            
-            if (fuelNeeded > fuel) {
-                fuelRequired.style.color = '#ff5555';
-                kmAddBtn.disabled = true;
-            } else {
-                fuelRequired.style.color = '#4A90E2';
-                kmAddBtn.disabled = false;
-            }
-        }
-        
-        // Закрыть меню километров
-        function closeKmMenu() {
-            kmMenuOverlay.classList.remove('active');
-        }
-        
-        // Обработка добавления километров
-        function handleAddKm() {
-            const km = parseFloat(kmInput.value);
-            
-            if (addKilometers(km)) {
-                closeKmMenu();
-            }
-        }
-        
-        // Обработчики событий для кнопок рейтинга
-        starButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                selectedRating = parseInt(this.getAttribute('data-rating'));
-                
-                // Сбросить все кнопки
-                starButtons.forEach(btn => {
-                    btn.classList.remove('active');
+
+        // Инициализация базы данных
+        async function initDatabase() {
+            const snapshot = await db.ref(`drivers/${MIKHAIL_ID}`).once('value');
+            if (!snapshot.exists()) {
+                await db.ref(`drivers/${MIKHAIL_ID}`).set({
+                    name: 'Михаил',
+                    kmToday: 0,
+                    earnedToday: 0,
+                    fuelLeft: 50,
+                    ratings: [],
+                    averageRating: 0
                 });
-                
-                // Подсветить выбранную и все предыдущие
-                for (let i = 1; i <= selectedRating; i++) {
-                    document.querySelector(`.star-btn[data-rating="${i}"]`).classList.add('active');
+            }
+        }
+
+        // Обновление интерфейса Михаила
+        function updateMikhailUI(data) {
+            if (!data) return;
+            
+            kmTodayEl.textContent = Number(data.kmToday || 0).toFixed(2);
+            earnedTodayEl.textContent = Number(data.earnedToday || 0).toFixed(2);
+            fuelLeftEl.textContent = Number(data.fuelLeft || 0).toFixed(2);
+            
+            const rating = Number(data.averageRating || 0);
+            ratingTextEl.textContent = `${rating.toFixed(1)} ★`;
+            
+            generateStars(rating);
+        }
+
+        // Генерация звёзд
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            
+            let starsHtml = '';
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) {
+                    starsHtml += '<span class="star filled">★</span>';
+                } else if (i === fullStars && hasHalfStar) {
+                    starsHtml += '<span class="star filled">½</span>';
+                } else {
+                    starsHtml += '<span class="star">☆</span>';
+                }
+            }
+            starRatingEl.innerHTML = starsHtml;
+        }
+
+        // Слушатель изменений Михаила
+        function subscribeToMikhail() {
+            if (mikhailListener) {
+                db.ref(`drivers/${MIKHAIL_ID}`).off('value', mikhailListener);
+            }
+            
+            const mikhailRef = db.ref(`drivers/${MIKHAIL_ID}`);
+            mikhailListener = mikhailRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    if (currentUserName === 'Михаил') {
+                        updateMikhailUI(data);
+                    }
+                    
+                    if (currentUserName === 'Николай') {
+                        nikolayKmEl.textContent = Number(data.kmToday || 0).toFixed(2);
+                        nikolayMoneyEl.textContent = Number(data.earnedToday || 0).toFixed(2);
+                        nikolayFuelEl.textContent = Number(data.fuelLeft || 0).toFixed(2);
+                        nikolayRatingEl.textContent = Number(data.averageRating || 0).toFixed(1);
+                    }
                 }
             });
-        });
+        }
+
+        // ========== ДЕЙСТВИЯ НИКОЛАЯ ==========
         
-        // Основные обработчики событий
-        ratingBtn.addEventListener('click', openRatingMenu);
-        ratingCancelBtn.addEventListener('click', closeRatingMenu);
-        ratingApplyBtn.addEventListener('click', applyRating);
-        
-        clearBtn.addEventListener('click', clearData);
-        addKmBtn.addEventListener('click', openKmMenu);
-        fuelDisplay.addEventListener('click', openFuelMenu);
-        fuelCancelBtn.addEventListener('click', closeFuelMenu);
-        fuelApplyBtn.addEventListener('click', applyFuelAdd);
-        kmCancelBtn.addEventListener('click', closeKmMenu);
-        kmAddBtn.addEventListener('click', handleAddKm);
-        
-        // Закрыть меню при клике вне его
-        ratingMenuOverlay.addEventListener('click', function(e) {
-            if (e.target === ratingMenuOverlay) closeRatingMenu();
-        });
-        
-        fuelMenuOverlay.addEventListener('click', function(e) {
-            if (e.target === fuelMenuOverlay) closeFuelMenu();
-        });
-        
-        kmMenuOverlay.addEventListener('click', function(e) {
-            if (e.target === kmMenuOverlay) closeKmMenu();
-        });
-        
-        // Обработка Enter в полях ввода
-        fuelInput.addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') applyFuelAdd();
-        });
-        
-        kmInput.addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') handleAddKm();
-        });
-        
-        // Обновление расчётов при изменении километров
-        kmInput.addEventListener('input', updateKmMenuCalculations);
-        
-        // Форматирование ввода (автодобавление .00 при потере фокуса)
-        kmInput.addEventListener('blur', function() {
-            if (this.value && !isNaN(parseFloat(this.value))) {
-                this.value = parseFloat(this.value).toFixed(2);
+        // Добавить километры
+        async function addKilometers(km) {
+            if (km <= 0) {
+                showToast('Введите положительное число');
+                return;
             }
-        });
-        
-        fuelInput.addEventListener('blur', function() {
-            if (this.value && !isNaN(parseFloat(this.value))) {
-                this.value = parseFloat(this.value).toFixed(2);
-            }
-        });
-        
-        // Инициализация при загрузке
-        window.addEventListener('load', function() {
-            loadData();
-            loadRatingData();
-            showNotification('Приложение загружено', 'success');
-        });
-        
-        // Адаптация для маленьких экранов
-        function adjustForSmallScreens() {
-            const container = document.querySelector('.app-container');
-            const header = document.querySelector('.app-header');
-            const mainContent = document.querySelector('.main-content');
             
-            if (window.innerHeight < 650) {
-                container.style.height = '98vh';
-                container.style.maxHeight = '98vh';
-                header.style.padding = '15px 15px 12px';
-                mainContent.style.padding = '15px 15px 10px';
+            const mikhailRef = db.ref(`drivers/${MIKHAIL_ID}`);
+            const snapshot = await mikhailRef.once('value');
+            const data = snapshot.val();
+            
+            if (!data) return;
+            
+            const newKm = Number(data.kmToday || 0) + km;
+            const newEarned = Number(data.earnedToday || 0) + (km * TARIFF);
+            const newFuel = Number(data.fuelLeft || 0) - (km * FUEL_CONSUMPTION);
+            
+            if (newFuel < 0) {
+                showToast('❌ Недостаточно бензина! Сначала добавьте бензин.');
+                return;
+            }
+            
+            await mikhailRef.update({
+                kmToday: Number(newKm.toFixed(2)),
+                earnedToday: Number(newEarned.toFixed(2)),
+                fuelLeft: Number(newFuel.toFixed(2))
+            });
+            
+            showToast(`✅ Добавлено ${km.toFixed(2)} км, заработок +${(km * TARIFF).toFixed(2)} ₽`);
+        }
+
+        // Добавить бензин
+        async function addFuel(liters) {
+            if (liters <= 0) {
+                showToast('Введите положительное число');
+                return;
+            }
+            
+            const mikhailRef = db.ref(`drivers/${MIKHAIL_ID}`);
+            const snapshot = await mikhailRef.once('value');
+            const data = snapshot.val();
+            
+            if (!data) return;
+            
+            const newFuel = Number(data.fuelLeft || 0) + liters;
+            
+            await mikhailRef.update({
+                fuelLeft: Number(newFuel.toFixed(2))
+            });
+            
+            showToast(`⛽ Добавлено ${liters.toFixed(2)} л бензина`);
+        }
+
+        // Добавить оценку
+        async function addRating(rating) {
+            if (rating < 1 || rating > 5) return;
+            
+            const mikhailRef = db.ref(`drivers/${MIKHAIL_ID}`);
+            const snapshot = await mikhailRef.once('value');
+            const data = snapshot.val();
+            
+            if (!data) return;
+            
+            const ratings = data.ratings || [];
+            ratings.push(rating);
+            
+            const sum = ratings.reduce((a, b) => a + b, 0);
+            const average = sum / ratings.length;
+            
+            await mikhailRef.update({
+                ratings: ratings,
+                averageRating: Number(average.toFixed(1))
+            });
+            
+            showToast(`⭐ Добавлена оценка: ${rating} ★`);
+        }
+
+        // ========== НОВЫЕ ФУНКЦИИ ОЧИСТКИ ==========
+        
+        // Очистить километры
+        async function clearKilometers() {
+            const mikhailRef = db.ref(`drivers/${MIKHAIL_ID}`);
+            const snapshot = await mikhailRef.once('value');
+            const data = snapshot.val();
+            
+            if (!data) return;
+            
+            await mikhailRef.update({
+                kmToday: 0
+            });
+            
+            showToast('🧹 Километры очищены до 0');
+        }
+
+        // Очистить заработок
+        async function clearEarned() {
+            const mikhailRef = db.ref(`drivers/${MIKHAIL_ID}`);
+            const snapshot = await mikhailRef.once('value');
+            const data = snapshot.val();
+            
+            if (!data) return;
+            
+            await mikhailRef.update({
+                earnedToday: 0
+            });
+            
+            showToast('💰 Заработок очищен до 0');
+        }
+
+        // Очистить рейтинг
+        async function clearRating() {
+            const mikhailRef = db.ref(`drivers/${MIKHAIL_ID}`);
+            
+            await mikhailRef.update({
+                ratings: [],
+                averageRating: 0
+            });
+            
+            showToast('⭐ Рейтинг полностью очищен');
+        }
+
+        // ========== АВТОРИЗАЦИЯ ==========
+        
+        async function checkSavedSession() {
+            const savedUser = localStorage.getItem('taximeter_user');
+            if (savedUser) {
+                await initDatabase();
+                if (savedUser === 'Михаил') {
+                    currentUserName = 'Михаил';
+                    authScreen.classList.add('hidden');
+                    mikhailScreen.classList.remove('hidden');
+                    nikolayScreen.classList.add('hidden');
+                    subscribeToMikhail();
+                    showToast('🚖 С возвращением, Михаил!');
+                } else if (savedUser === 'Николай') {
+                    currentUserName = 'Николай';
+                    authScreen.classList.add('hidden');
+                    mikhailScreen.classList.add('hidden');
+                    nikolayScreen.classList.remove('hidden');
+                    subscribeToMikhail();
+                    showToast('📋 С возвращением, Николай!');
+                }
             }
         }
+
+        async function login(username) {
+            if (!username) {
+                showToast('Введите имя');
+                return;
+            }
+            
+            if (username.toLowerCase() === 'михаил') {
+                currentUserName = 'Михаил';
+                localStorage.setItem('taximeter_user', 'Михаил');
+                authScreen.classList.add('hidden');
+                mikhailScreen.classList.remove('hidden');
+                nikolayScreen.classList.add('hidden');
+                showToast('🚖 Добро пожаловать, Михаил!');
+            } 
+            else if (username.toLowerCase() === 'николай') {
+                currentUserName = 'Николай';
+                localStorage.setItem('taximeter_user', 'Николай');
+                authScreen.classList.add('hidden');
+                mikhailScreen.classList.add('hidden');
+                nikolayScreen.classList.remove('hidden');
+                showToast('📋 Добро пожаловать, Николай!');
+            }
+            else {
+                showToast('Доступ разрешён только Михаилу или Николаю');
+                return;
+            }
+            
+            await initDatabase();
+            subscribeToMikhail();
+        }
+
+        function logout() {
+            localStorage.removeItem('taximeter_user');
+            currentUserName = '';
+            authScreen.classList.remove('hidden');
+            mikhailScreen.classList.add('hidden');
+            nikolayScreen.classList.add('hidden');
+            
+            if (mikhailListener) {
+                db.ref(`drivers/${MIKHAIL_ID}`).off('value', mikhailListener);
+                mikhailListener = null;
+            }
+            
+            usernameInput.value = '';
+            showToast('👋 Вы вышли из системы');
+        }
+
+        // ========== ОБРАБОТЧИКИ ==========
         
-        window.addEventListener('resize', adjustForSmallScreens);
-        adjustForSmallScreens();
+        loginBtn.addEventListener('click', () => {
+            login(usernameInput.value.trim());
+        });
+
+        usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                login(usernameInput.value.trim());
+            }
+        });
+
+        document.getElementById('logout-btn-mikhail').addEventListener('click', logout);
+        document.getElementById('logout-btn-nikolay').addEventListener('click', logout);
+
+        // Добавление км
+        document.getElementById('add-km-btn').addEventListener('click', () => {
+            const km = parseFloat(document.getElementById('add-km-input').value);
+            if (!isNaN(km)) {
+                addKilometers(km);
+                document.getElementById('add-km-input').value = '';
+            }
+        });
+
+        // Добавление бензина
+        document.getElementById('add-fuel-btn').addEventListener('click', () => {
+            const liters = parseFloat(document.getElementById('add-fuel-input').value);
+            if (!isNaN(liters)) {
+                addFuel(liters);
+                document.getElementById('add-fuel-input').value = '';
+            }
+        });
+
+        // ОЦЕНКИ
+        document.getElementById('rate-1').addEventListener('click', () => addRating(1));
+        document.getElementById('rate-2').addEventListener('click', () => addRating(2));
+        document.getElementById('rate-3').addEventListener('click', () => addRating(3));
+        document.getElementById('rate-4').addEventListener('click', () => addRating(4));
+        document.getElementById('rate-5').addEventListener('click', () => addRating(5));
+
+        // ========== НОВЫЕ ОБРАБОТЧИКИ ОЧИСТКИ ==========
+        
+        // Очистить километры
+        document.getElementById('clear-km-btn').addEventListener('click', clearKilometers);
+        
+        // Очистить заработок
+        document.getElementById('clear-earned-btn').addEventListener('click', clearEarned);
+        
+        // Очистить рейтинг
+        document.getElementById('clear-rating-btn').addEventListener('click', clearRating);
+
+        // Анонимный вход Firebase
+        auth.signInAnonymously().catch(console.error);
+        
+        // Проверяем сохранённую сессию
+        window.addEventListener('load', () => {
+            checkSavedSession();
+        });
     </script>
 </body>
 </html>
